@@ -1,0 +1,139 @@
+{
+  "template_id": "consistencia-personagem",
+  "template_version": "1.0",
+  "description": "Consistência de personagem entre gerações — nova pose, novo ângulo ou novo ambiente com a mesma identidade preservada. Regime `generation` com bloco `character` obrigatório. Recomendado como turno seguinte de outro template (retrato-estudio, retrato-ceu-aberto). Uso: série 360°, sequência narrativa, variantes de campanha.",
+  "regime": "generation",
+  "has_person": true,
+  "aliases": ["character consistency", "same subject new pose", "consistência de personagem"],
+
+  "ask_before": [
+    { "field": "subject.description", "prompt": "Descrição textual do sujeito referenciado, âncora textual à imagem de referência." },
+    { "field": "subject.asymmetries", "prompt": "As MESMAS assimetrias declaradas na geração de origem. Não invente novas — se variam, viram identidade diferente." },
+    { "field": "subject.preserved_marks", "prompt": "As MESMAS marcas da geração de origem, com posição e tamanho idênticos." },
+    { "field": "subject.expression", "prompt": "Expressão desta geração — pode variar." },
+    { "field": "character.variable", "prompt": "O que muda nesta geração em relação à referência: pose, ângulo, luz, ambiente, vestuário. Só o que aparecer aqui pode variar." },
+    { "field": "character.references_urls", "prompt": "URL(s) das imagens de referência. Recomendado: realimentar a última geração APROVADA da série, não a original — a deriva se acumula. Máximo 5 referências de identidade no gemini-3-pro-image." },
+    { "field": "scene.headline", "prompt": "Frase de abertura descrevendo esta variante — nova pose, novo ângulo, novo ambiente." }
+  ],
+
+  "defaults": {
+    "spec_version": "1.0",
+    "meta": {
+      "modality": 1,
+      "target_model": "gemini-3-pro-image",
+      "user_request": ""
+    },
+    "output": { "aspect_ratio": "4:5", "resolution": "2K", "orientation": "vertical" },
+    "scene": {
+      "regime": "generation",
+      "has_person": true,
+      "setting": "studio"
+    },
+    "subject": {
+      "vellus_hair": "vellus at the jaw and hairline, matching the identity reference"
+    },
+    "wardrobe": [
+      {
+        "garment": "as declared on the identity reference unless character.variable authorises change",
+        "fabric": "as declared on the identity reference",
+        "weave": "as declared on the identity reference",
+        "tension_creases": ["as declared on the identity reference"]
+      }
+    ],
+    "camera": {
+      "body": "Phase One XF IQ4 150MP",
+      "sensor_format": "medium_format",
+      "focal_length_mm": 110,
+      "aperture_f": 4,
+      "shutter": "1/250s",
+      "iso": 50,
+      "distance_m": 2.1,
+      "height": "at subject eye height",
+      "focal_plane": {
+        "in_focus": ["the near eye in this new pose"],
+        "out_of_focus": ["the far eye and the shoulder soften progressively"]
+      }
+    },
+    "optics": {
+      "bokeh_character": "smooth centre with mild cat-eye deformation at the frame edges"
+    },
+    "lighting": {
+      "sources": [
+        { "role": "key", "modifier": "1.5 metre indirect octabox", "size_m": 1.5, "distance_m": 1.4, "azimuth_deg": 40, "elevation": "25 degrees above the eye line", "colour_temp_k": 5600 },
+        { "role": "fill", "modifier": "1.2 metre white bounce card camera-right", "size_m": 1.2, "distance_m": 1.8, "azimuth_deg": 320, "elevation": "at eye line", "colour_temp_k": 5600 },
+        { "role": "background", "modifier": "separate wash on mid-grey seamless", "size_m": 1.2, "distance_m": 1.5, "azimuth_deg": 270, "elevation": "at subject height", "colour_temp_k": 5600, "stops_relative_to_key": -2 }
+      ],
+      "key_fill_ratio": "3:1",
+      "penumbra": { "width_cm": "3 to 4", "location": "along the jaw" },
+      "shadow_direction": "falls down and camera-right, consistent for every element",
+      "catchlight": {
+        "shape": "a soft-cornered octagon mirroring the octabox",
+        "position": "the ten o'clock position",
+        "far_eye": "smaller and dimmer in the far eye"
+      }
+    },
+    "skin": {
+      "pore_scale": "at true pore scale for this framing, preserved from the identity reference",
+      "specular_zones": "sebum sheen on the T-zone as in the reference; T-zone brighter than the cheeks",
+      "subsurface": "subsurface scattering reddens the ear rims and the outer nostrils as in the reference",
+      "regional_variation": "fine dryness on the lips as in the reference"
+    },
+    "render": {
+      "colour_profile": "Kodak Portra 400 matched to the reference",
+      "highlight_rolloff": "gradual, matching the reference",
+      "black_point": "deepest shadow near 8 percent luminance, matching the reference",
+      "grain": "fine luminance grain consistent with ISO 50, matching the reference"
+    },
+    "frame": {
+      "composition": "subject placed to give room for the new pose declared in character.variable"
+    },
+    "character": {
+      "invariant": [
+        "facial geometry: jaw shape, interocular distance, nose bridge width, ear shape",
+        "skin tone and micro-texture",
+        "every mole, freckle, scar and asymmetry declared in subject",
+        "hairstyle including the stray strands from the reference"
+      ],
+      "identity_reference_count": 1,
+      "reference_chain": "if this is part of a series, the next generation should reference this approved output rather than the original — feeding derivations avoids identity drift"
+    },
+    "imperfection_budget": [
+      { "category": "styling", "specific": "the stray strand across the forehead visible on the reference sits in the same spot on this variant, adjusted only to match the new head angle" }
+    ],
+    "capture_reality": "A single frame in the same series as the identity reference, taken minutes later with the same setup",
+    "avoid": [
+      "illustration", "3D render", "CGI", "digital painting",
+      "alteration of any preserved facial mark",
+      "shift in skin tone",
+      "different hairstyle",
+      "airbrushed or waxy skin", "uniform poreless texture", "perfect facial symmetry",
+      "shadow direction disagreement between subject and background",
+      "second light direction on the face",
+      "watermark", "text overlay"
+    ]
+  },
+
+  "example_answers": {
+    "meta.user_request": "mesma personagem do retrato anterior, agora em três-quartos olhando para a direita",
+    "scene.headline": "Editorial studio portrait, same subject as the reference, three-quarter turn to camera-right",
+    "subject.description": "A 29-year-old woman with warm mid-brown skin, dark eyes and long straight dark hair pulled back, as in the identity reference",
+    "subject.asymmetries": [
+      "the left eyebrow sits marginally higher than the right, unchanged from the reference",
+      "the right corner of the mouth carries a longer smile line, unchanged from the reference"
+    ],
+    "subject.preserved_marks": [
+      "a 3mm mole on the left cheekbone, unchanged",
+      "two faint freckles at the bridge of the nose, unchanged",
+      "a 4mm pale scar along the left jawline, unchanged"
+    ],
+    "subject.expression": "the mouth stays closed and neutral, the head turned three quarters to camera-right, the near eye engaged with the lens off-axis",
+    "character.variable": [
+      "head turned three quarters to camera-right",
+      "gaze rotated with the head, eyes engaged with the camera off-axis",
+      "shoulder line adjusted for the new head position"
+    ],
+    "character.references_urls": [
+      "https://example.com/references/identity-anna-approved.jpg"
+    ]
+  }
+}

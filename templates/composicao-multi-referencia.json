@@ -1,0 +1,141 @@
+{
+  "template_id": "composicao-multi-referencia",
+  "template_version": "1.0",
+  "description": "Composição multi-referência: combina até três papéis de imagem (personagem, objeto, estilo) numa geração única. Regime `composition`. Uso: colocar um objeto num cenário com um sujeito específico; combinar estilo de uma imagem com pose de outra.",
+  "regime": "composition",
+  "has_person": true,
+  "aliases": ["multi-reference composition", "mix references", "composição de referências"],
+
+  "ask_before": [
+    { "field": "subject.description", "prompt": "Descrição do sujeito referenciado, para servir de âncora textual à imagem de referência. Não repete a foto — resume traços que precisam sobreviver." },
+    { "field": "subject.asymmetries", "prompt": "Assimetrias específicas do sujeito referenciado." },
+    { "field": "subject.preserved_marks", "prompt": "Marcas do sujeito referenciado, para o modelo saber o que é identidade." },
+    { "field": "subject.expression", "prompt": "Expressão desejada — pode diferir das referências (parte variável)." },
+    { "field": "character.invariant", "prompt": "O que precisa sobreviver da referência (identidade facial, marcas, tom de pele)." },
+    { "field": "character.variable", "prompt": "O que pode variar (pose, ambiente, vestuário, iluminação)." },
+    { "field": "character.references_urls", "prompt": "URLs públicas das imagens de referência. Ordem sugerida: identidade, depois objetos, depois estilo. Máximo 5 de identidade, 6 de objetos e 3 de estilo — 14 no total pela API Gemini; 8 no total pelo /nano-banana da Higgsfield." },
+    { "field": "scene.headline", "prompt": "Frase de abertura da composição — o que a cena final representa." }
+  ],
+
+  "defaults": {
+    "spec_version": "1.0",
+    "meta": {
+      "modality": 1,
+      "target_model": "gemini-3-pro-image",
+      "user_request": ""
+    },
+    "output": { "aspect_ratio": "4:5", "resolution": "2K", "orientation": "vertical" },
+    "scene": {
+      "regime": "composition",
+      "has_person": true,
+      "setting": "studio"
+    },
+    "subject": {
+      "vellus_hair": "vellus at the jaw preserved from the reference"
+    },
+    "wardrobe": [
+      {
+        "garment": "as visible on the identity reference; changes only where character.variable authorises",
+        "fabric": "as visible on the identity reference",
+        "weave": "as visible on the identity reference",
+        "tension_creases": ["as visible on the identity reference"]
+      }
+    ],
+    "camera": {
+      "body": "Phase One XF IQ4 150MP",
+      "sensor_format": "medium_format",
+      "focal_length_mm": 110,
+      "aperture_f": 4,
+      "shutter": "1/250s",
+      "iso": 50,
+      "distance_m": 2.1,
+      "height": "at subject eye height",
+      "focal_plane": {
+        "in_focus": ["the near eye of the composed subject"],
+        "out_of_focus": ["the far eye and the shoulder soften progressively"]
+      }
+    },
+    "optics": {
+      "bokeh_character": "smooth centre with mild cat-eye deformation at the frame edges"
+    },
+    "lighting": {
+      "sources": [
+        { "role": "key", "modifier": "1.5 metre indirect octabox", "size_m": 1.5, "distance_m": 1.4, "azimuth_deg": 40, "elevation": "25 degrees above the eye line", "colour_temp_k": 5600 },
+        { "role": "fill", "modifier": "1.2 metre white bounce card camera-right", "size_m": 1.2, "distance_m": 1.8, "azimuth_deg": 320, "elevation": "at eye line", "colour_temp_k": 5600 },
+        { "role": "background", "modifier": "separate wash on mid-grey seamless", "size_m": 1.2, "distance_m": 1.5, "azimuth_deg": 270, "elevation": "at subject height", "colour_temp_k": 5600, "stops_relative_to_key": -2 }
+      ],
+      "key_fill_ratio": "3:1",
+      "penumbra": { "width_cm": "3 to 4", "location": "along the jaw" },
+      "shadow_direction": "falls down and camera-right, consistent for every element in the composed scene",
+      "catchlight": {
+        "shape": "a soft-cornered octagon mirroring the octabox",
+        "position": "the ten o'clock position",
+        "far_eye": "smaller and dimmer in the far eye"
+      }
+    },
+    "skin": {
+      "pore_scale": "at true pore scale for the framing, preserved from the identity reference",
+      "specular_zones": "sebum sheen on the T-zone as visible in the identity reference; the T-zone stays measurably brighter than the cheeks",
+      "subsurface": "subsurface scattering reddens the ear rims and outer nostrils as in the reference"
+    },
+    "render": {
+      "colour_profile": "matched across all referenced sources; if references disagree, the identity reference sets the palette",
+      "highlight_rolloff": "gradual, without clipping any specular from the objects reference",
+      "black_point": "the deepest shadow near 8 percent luminance rather than pure black",
+      "grain": "fine luminance grain consistent with ISO 50"
+    },
+    "frame": {
+      "composition": "subject centred with the composed object or style element sharing the frame without occluding the face",
+      "headroom": "moderate headroom, roughly 8 percent of frame height above the crown"
+    },
+    "character": {
+      "identity_reference_count": 1,
+      "object_reference_count": 0,
+      "style_reference_count": 0,
+      "reference_chain": "if this composition seeds a series, feed the approved output back as the identity reference on the next turn instead of the original identity reference"
+    },
+    "imperfection_budget": [
+      { "category": "styling", "specific": "one stray hair falls across the forehead, matching the halo of stray strands visible on the identity reference" }
+    ],
+    "capture_reality": "A single composed frame that combines the declared references under the identity reference's lighting and palette",
+    "avoid": [
+      "illustration", "3D render", "CGI", "digital painting",
+      "alteration of any preserved facial mark",
+      "shift in skin tone from the identity reference",
+      "airbrushed or waxy skin", "perfect facial symmetry",
+      "shadow direction disagreement between subject and composed elements",
+      "second light direction on the face",
+      "watermark", "text overlay"
+    ]
+  },
+
+  "example_answers": {
+    "meta.user_request": "quero uma composição da minha personagem (imagem 1) segurando o produto (imagem 2), com iluminação de estúdio",
+    "scene.headline": "Composed studio portrait: identity reference holding the object reference, waist-up",
+    "subject.description": "A 29-year-old woman with warm mid-brown skin, dark eyes and long straight dark hair pulled back, as preserved from the identity reference",
+    "subject.asymmetries": [
+      "the left eyebrow sits marginally higher than the right, as in the reference",
+      "the right corner of the mouth carries a longer smile line, as in the reference"
+    ],
+    "subject.preserved_marks": [
+      "a 3mm mole on the left cheekbone, as in the reference",
+      "two faint freckles at the bridge of the nose, as in the reference"
+    ],
+    "subject.expression": "a closed-mouth half-smile with the gaze engaged toward camera, chin down a few degrees",
+    "character.invariant": [
+      "facial geometry: jaw shape, interocular distance, nose bridge width",
+      "skin tone and micro-texture from the identity reference",
+      "every mole, freckle and asymmetry declared in subject.preserved_marks",
+      "hairstyle and any stray strands visible on the identity reference"
+    ],
+    "character.variable": [
+      "pose and hand position now hold the object reference at waist height",
+      "expression allowed to shift within the closed-mouth range",
+      "wardrobe visible below the chest may vary from the identity reference"
+    ],
+    "character.references_urls": [
+      "https://example.com/references/identity-anna.jpg",
+      "https://example.com/references/product-hero.jpg"
+    ]
+  }
+}

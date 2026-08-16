@@ -17,9 +17,9 @@ Atualizado em: **2026-08-16**
 | **E0 — Fontes** | **Concluída e aprovada.** `docs/00-fontes/`, commit `e95ac90`. **Revisada em 2026-08-16** com a fonte primária liberada — ver `00-fontes/06-fonte-primaria-ai-google-dev.md` |
 | **E1 — Doutrina de hiper-realismo** | **Concluída e aprovada.** `docs/01-doutrina-hiper-realismo.md`, commit `310c503` |
 | **E2 — Gramática do prompt** | **Concluída e aprovada.** `docs/02-gramatica-do-prompt.md`, `schemas/`, commit `ea52f57` |
-| **E3 — Modalidades** | **Concluída, aguardando aprovação no gate.** `docs/03-modalidades/`, renderizadores no `schemas/validador.py`, instância de edição no `schemas/exemplos/exemplo-3-edicao-fundo.json` |
-| E4 — Biblioteca de templates | **Próxima.** Aguardando aprovação de E3 |
-| E5 — Implementação | Não iniciada |
+| **E3 — Modalidades** | **Concluída e aprovada.** `docs/03-modalidades/`, commit `4f95674` |
+| **E4 — Biblioteca de templates** | **Concluída, aguardando aprovação no gate.** `templates/` com 8 templates, resolver em `templates/_resolver.py`, `docs/04-templates.md` |
+| E5 — Implementação | **Próxima.** Aguardando aprovação de E4 |
 | E6 — Loop de retroalimentação | Não iniciada |
 | E7 — Validação e fechamento | Não iniciada |
 
@@ -31,6 +31,7 @@ Atualizado em: **2026-08-16**
 - Gramática de blocos rotulados em maiúsculas + cauda `AVOID` curta. Justificada em `docs/00-fontes/04-guia-de-prompts-oficial.md`. Critério de admissão à cauda formalizado em `docs/01-doutrina-hiper-realismo.md`, seção 6.
 - Teto de **5 imagens de referência** para qualquer template que dependa de identidade preservada. A documentação primeiro-parte decompõe os 14 em orçamentos por papel: **5 personagens** para identidade, **6 objetos** em alta fidelidade, **3 referências de estilo**. Razão em `docs/00-fontes/05-divergencias-e-lacunas.md`, D2. *Corrigido em 2026-08-16 e aprovado pelo autor no gate de E1; a versão anterior desta decisão dizia 6, que era o orçamento de objetos lido como se valesse para identidade.*
 - Orçamento de densidade **por regime**, não banda única: 500–650 para geração com pessoa, 350–560 sem pessoa, 250–400 para edição. A banda 350–500 do prompt-mestre reprovava dois dos três exemplos âncora, e o "~450" atribuído ao exemplo 1 erra por ~150 palavras — ele tem 597. Derivação em `docs/02-gramatica-do-prompt.md`, seção 3. *Decidido pelo autor no gate de E2, em 2026-08-16.*
+- **Faixa "ancorada em referência" (350–560) com prioridade sobre a faixa por regime**, aplicada quando `character.references_urls` não é vazio. Cobre composição multi-referência e consistência de personagem — os dois têm menos texto legítimo porque muitos campos apontam para a referência em vez de redeclarar. Derivação em `docs/04-templates.md`. *Adicionado em modo auto durante a E4, em 2026-08-16.*
 - Resolução padrão de saída: **2K**. 1K e 2K consomem os mesmos 1120 tokens e custam o mesmo (`$0,134`); 4K custa `$0,24`. Fonte em `docs/00-fontes/06-fonte-primaria-ai-google-dev.md`.
 
 ## Pendências externas

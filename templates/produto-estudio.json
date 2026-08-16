@@ -1,0 +1,98 @@
+{
+  "template_id": "produto-estudio",
+  "template_version": "1.0",
+  "description": "Foto de produto em estúdio, hero object, sem pessoa. Strip softbox key + card fill + flag subtractive. Uso: e-commerce premium, hero de landing page.",
+  "regime": "generation",
+  "has_person": false,
+  "aliases": ["hero product", "still de produto", "product photograph"],
+
+  "ask_before": [
+    { "field": "scene.headline", "prompt": "Frase de abertura: tipo de produto, disposição na cena, superfície de apoio. Ex.: 'A men's mechanical wristwatch resting at a 15-degree tilt on a slab of honed dark grey slate'." },
+    { "field": "materials", "prompt": "Lista de superfícies do produto, cada uma com acabamento (polished, brushed, matte, honed, coated_glass, leather, textile, painted, raw), resposta especular e — quando faz reflexo — o que reflete." },
+    { "field": "reflection_closure", "prompt": "Cláusula de fechamento do bloco REFLECTION GEOMETRY, sempre no espírito de 'nothing in the reflections implies a light source that is not declared'." },
+    { "field": "output.aspect_ratio", "prompt": "Proporção. Recomendado 4:5 para hero vertical, 1:1 para carrossel, 16:9 para banner." }
+  ],
+
+  "defaults": {
+    "spec_version": "1.0",
+    "meta": {
+      "modality": 1,
+      "target_model": "gemini-3-pro-image",
+      "user_request": ""
+    },
+    "output": { "resolution": "2K", "orientation": "vertical" },
+    "scene": { "regime": "generation", "has_person": false, "setting": "studio" },
+    "camera": {
+      "body": "Fujifilm GFX100 II",
+      "sensor_format": "medium_format",
+      "focal_length_mm": 120,
+      "aperture_f": 11,
+      "shutter": "1/125s",
+      "iso": 100,
+      "distance_m": 0.6,
+      "height": "10 degrees above the object plane",
+      "focal_plane": {
+        "in_focus": ["the near face of the object"],
+        "out_of_focus": [
+          "the far edge of the surface softens progressively",
+          "any trailing element softens progressively"
+        ]
+      },
+      "focus_stacking": false,
+      "perspective_note": "120mm macro on medium format holds the object geometry without wide-angle distortion"
+    },
+    "optics": {
+      "bokeh_character": "progressive falloff behind the focal plane with no swirl at the frame edge"
+    },
+    "lighting": {
+      "sources": [
+        { "role": "key", "modifier": "90 by 30 centimetre strip softbox overhead camera-left", "size_m": 0.9, "distance_m": 0.7, "azimuth_deg": 45, "elevation": "70 degrees above the object plane", "colour_temp_k": 5600, "feathering": "feathered so its reflection lands on the object as one continuous soft-edged white band running upper-left to lower-right, never a hotspot" },
+        { "role": "fill", "modifier": "large white card camera-right", "size_m": 1.0, "distance_m": 0.5, "azimuth_deg": 300, "elevation": "at the object plane", "colour_temp_k": 5600 }
+      ],
+      "key_fill_ratio": "4:1",
+      "penumbra": { "width_cm": "1 to 2", "location": "across the surface away from the object" },
+      "shadow_direction": "falls down and camera-right from the overhead key, consistent for every declared element",
+      "contact_shadow": "The contact shadow under the object is tight and dense, opening into a soft penumbra across the surface",
+      "background_treatment": "A black flag below the camera line deepens the near chamfer into a defined dark gradient"
+    },
+    "render": {
+      "colour_profile": "neutral digital profile, no film emulation",
+      "highlight_rolloff": "Gradual highlight rolloff on the specular edges with no clipped whites",
+      "black_point": "deepest shadow under the object near 5 percent luminance",
+      "grain": "Very fine luminance grain consistent with ISO 100"
+    },
+    "frame": {
+      "composition": "Hero object centred with any trailing element leading toward the lower-right corner",
+      "headroom": "roughly 12 percent margin above the object"
+    },
+    "imperfection_budget": [
+      { "category": "environment", "specific": "A single mote of dust rests on the surface 3 centimetres from the object, just outside critical focus" },
+      { "category": "manufacturing", "specific": "One micro-scale manufacturing mark visible only in the specular band" }
+    ],
+    "capture_reality": "A single frame from a commercial product session",
+    "avoid": [
+      "3D render", "CGI look",
+      "floating object without contact shadow",
+      "blown specular hotspot",
+      "impossibly clean surfaces",
+      "mirror-perfect reflection symmetry",
+      "deformed typography",
+      "oversharpened edges",
+      "watermark", "text overlay"
+    ]
+  },
+
+  "example_answers": {
+    "meta.user_request": "foto de produto premium de um relógio de pulso mecânico para e-commerce de luxo",
+    "output.aspect_ratio": "4:5",
+    "scene.headline": "Studio product photograph, single hero object. A men's mechanical wristwatch resting at a 15-degree tilt on a slab of honed dark grey slate, strap partly unfolded toward the camera",
+    "materials": [
+      { "surface": "40mm brushed stainless steel case with polished chamfered bezel edges", "finish": "brushed", "specular_response": "the radial brushing shows fine directional grain under the key light while the chamfers read as bright specular lines", "reflects": "the polished bezel carries a legible, geometrically correct reflection of the strip light, while the brushed flanks scatter it into a broad directional sheen" },
+      { "surface": "deep blue sunburst dial with applied polished indices", "finish": "polished", "specular_response": "the sunburst sheen rotates with the light angle, brightening along the radial grain", "reflects": "the applied indices return a compressed image of the strip softbox", "typography": "printed white minute track with crisp, correctly kerned typography" },
+      { "surface": "sapphire crystal with anti-reflective coating", "finish": "coated_glass", "specular_response": "transmits cleanly with a faint blue-violet cast at glancing angle", "reflects": "one continuous soft-edged band from the strip softbox, nothing else" },
+      { "surface": "vegetable-tanned brown leather strap with cream saddle stitching", "finish": "leather", "specular_response": "broad diffuse scatter with micro-specular on the raised grain, darkening where the leather folds at the spring bars", "manufacturing_defect": "one stitch sits fractionally tighter than its neighbours, and a hairline handling mark crosses the clasp, visible only in the specular band" },
+      { "surface": "slab of honed dark grey slate", "finish": "honed", "specular_response": "returns a dim diffuse double, never a mirror image", "reflects": "a dim diffuse double of the case, no legible detail" }
+    ],
+    "reflection_closure": "Nothing in the reflections implies a light source that is not declared"
+  }
+}

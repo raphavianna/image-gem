@@ -146,6 +146,8 @@ def source_size_vs_penumbra(spec, cfg):
 
 
 # Modificador de luz → forma de catchlight que ele produz.
+# Sol e céu aberto entram porque em exterior a fonte principal frequentemente
+# é `sun` (contraluz) ou `sky` (cúpula difusa), sem nenhuma `key` de estúdio.
 FORMAS_CATCHLIGHT = {
     "octabox": ("octagon", "octagonal"),
     "beauty dish": ("circle", "circular", "round"),
@@ -154,17 +156,30 @@ FORMAS_CATCHLIGHT = {
     "umbrella": ("circle", "circular", "round"),
     "window": ("rectangle", "rectangular", "quadrilateral", "pane"),
     "ring": ("ring", "annular"),
+    "sunlight": ("small", "round", "point", "concentrated", "specular"),
+    "sun ": ("small", "round", "point", "concentrated", "specular"),
+    "sky": ("large", "diffuse", "hemispherical", "broad"),
 }
 
 
+def _fonte_principal(spec):
+    """Preferência: key > sun > sky > primeira. Em exterior a key some."""
+    fontes = spec["lighting"]["sources"]
+    for papel in ("key", "sun", "sky"):
+        f = next((s for s in fontes if s["role"] == papel), None)
+        if f is not None:
+            return f
+    return fontes[0] if fontes else None
+
+
 def catchlight_vs_modifier(spec, cfg):
-    """C5 — a forma do catchlight corresponde ao modificador da key."""
+    """C5 — a forma do catchlight corresponde ao modificador da fonte principal."""
     catchlight = spec["lighting"].get("catchlight")
     if catchlight is None:
         return ["C5: há pessoa no quadro e nenhum catchlight declarado"]
-    key = next((s for s in spec["lighting"]["sources"] if s["role"] == "key"), None)
+    key = _fonte_principal(spec)
     if key is None:
-        return ["C5: nenhuma fonte com papel 'key'"]
+        return ["C5: nenhuma fonte de luz declarada"]
     modificador = key["modifier"].lower()
     forma = catchlight["shape"].lower()
     for chave, formas_ok in FORMAS_CATCHLIGHT.items():
@@ -445,17 +460,30 @@ def ck7_avoid_tail(spec, cfg, corpo):
 
 
 def faixa_de_densidade(spec, cfg):
-    """Seleciona a faixa de densidade aplicável ao regime do spec.
+    """Seleciona a faixa de densidade aplicável ao spec.
 
-    Os três regimes carregam conjuntos diferentes de blocos obrigatórios, então
-    a faixa é por regime e não banda única. Ver x-imagegem.orcamento_densidade.
+    Prioridade:
+      1. Faixa "reference-anchored" — se `character.references_urls` tem itens,
+         o corpo pesa menos porque muitos campos apontam para a referência em
+         vez de redeclarar. Vale para composição e para consistência de
+         personagem, que caem em regimes diferentes mas se comportam igual.
+      2. Faixa por regime — a decomposição que a E2 travou.
     """
+    tem_refs = bool(spec.get("character", {}).get("references_urls"))
+    faixas = cfg["orcamento_densidade"]["faixas"]
+
+    if tem_refs:
+        for faixa in faixas:
+            if faixa.get("quando") == "character.references_urls não vazio":
+                return faixa
+
     regime = spec["scene"]["regime"]
-    # Composição segue as faixas de geração: os blocos obrigatórios são os mesmos.
+    # Composição sem referência declarada cai nas faixas de geração — os blocos
+    # obrigatórios são os mesmos. Composição com referência já saiu acima.
     if regime == "composition":
         regime = "generation"
-    for faixa in cfg["orcamento_densidade"]["faixas"]:
-        if faixa["regime"] != regime:
+    for faixa in faixas:
+        if faixa.get("regime") != regime:
             continue
         if "has_person" in faixa and faixa["has_person"] != spec["scene"]["has_person"]:
             continue

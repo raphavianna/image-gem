@@ -401,7 +401,12 @@
           "minLength": 20,
           "description": "Como o novo ambiente justifica a luz já gravada no sujeito."
         },
-        "integration": { "type": "string", "description": "Sombra de contato, reflexo, perspectiva atmosférica, casamento de paleta." }
+        "integration": { "type": "string", "description": "Sombra de contato, reflexo, perspectiva atmosférica, casamento de paleta." },
+        "source_urls": {
+          "type": "array",
+          "description": "URLs públicas do quadro de origem para regime edit. Consumidas pelas modalidades 3 e 4.",
+          "items": { "type": "string", "format": "uri" }
+        }
       }
     },
 
@@ -431,7 +436,13 @@
         },
         "object_reference_count": { "type": "integer", "minimum": 0, "maximum": 6 },
         "style_reference_count": { "type": "integer", "minimum": 0, "maximum": 3 },
-        "reference_chain": { "type": "string", "description": "Realimentar a saída aprovada do turno anterior. [GAI], seção de consistência em 360°." }
+        "reference_chain": { "type": "string", "description": "Realimentar a saída aprovada do turno anterior. [GAI], seção de consistência em 360°." },
+        "references_urls": {
+          "type": "array",
+          "description": "URLs públicas das imagens de referência. Consumidas pelas modalidades 3 e 4 no envelope da chamada.",
+          "items": { "type": "string", "format": "uri" },
+          "maxItems": 14
+        }
       }
     }
   },
@@ -447,6 +458,13 @@
       "escopo": "corpo do prompt renderizado, excluindo a cauda AVOID",
       "nota": "Faixas por regime, não banda única. Os três regimes carregam conjuntos diferentes de blocos obrigatórios, então uma faixa só reprovaria dois dos três exemplos âncora do prompt-mestre. Derivadas dos âncoras medidos (597, 410 e 290 palavras) com folga de cerca de 12%. Decisão do autor no gate de E2, em 2026-08-16.",
       "faixas": [
+        {
+          "quando": "character.references_urls não vazio",
+          "min_palavras": 350,
+          "max_palavras": 560,
+          "ancora": "template composicao-multi-referencia, ~456 palavras",
+          "razao": "Composição e consistência de personagem apontam para a referência em vez de redeclarar sujeito/vestuário/pele/luz. Prioridade sobre a faixa por regime — o mecanismo que reduz é a referência externa, não o regime."
+        },
         {
           "regime": "generation",
           "has_person": true,
