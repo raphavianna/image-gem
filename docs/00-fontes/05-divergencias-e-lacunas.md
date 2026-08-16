@@ -36,7 +36,7 @@ Registro da análise original, mantido:
 
 > **Correção de decisão travada.** O ESTADO registrava, entre as decisões não reabríveis: *"teto de 6 imagens de referência para qualquer template que dependa de identidade preservada — não 14"*. A direção estava certa (o teto útil é bem abaixo de 14), o número estava errado. **Para identidade preservada o teto é 5.** O 6 continua válido, mas como orçamento de objetos em alta fidelidade.
 >
-> A correção **estreita** a regra anterior, então nenhum trabalho a jusante ficou construído sobre suposição mais permissiva. Aplicada em `docs/01-doutrina-hiper-realismo.md`, seção 5, e herdada pelos templates da E4.
+> A correção **estreita** a regra anterior, então nenhum trabalho a jusante ficou construído sobre suposição mais permissiva. **Aprovada pelo autor no gate de E1, em 2026-08-16.** Aplicada em `docs/01-doutrina-hiper-realismo.md`, seção 5, codificada como validação no schema da E2, e herdada pelos templates da E4.
 
 A prosa de *Limitations* `[GAI]` diz *"gemini-3-pro-image supports 5 images with high fidelity"* onde a tabela diz 6 objetos — leitura conciliadora: o número da prosa é o de personagens, que é o caso que a frase seguinte discute.
 

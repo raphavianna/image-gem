@@ -321,7 +321,7 @@ Capability declarada como **primeira** da lista do modelo `[CB]`, e o ponto que 
 
 Os três orçamentos somam o teto: 6 + 5 + 3 = 14. O "14" nunca foi um teto indiferenciado.
 
-> **Correção de decisão travada.** O ESTADO fixou "teto de 6 imagens para qualquer template que dependa de identidade preservada", derivado de `[CB]`. A documentação primeiro-parte — autoridade para limites pela hierarquia do prompt-mestre — mostra que **6 é o orçamento de objetos e 5 é o de personagens**. A regra deste repositório passa a ser **5 referências de identidade**, e 6 permanece válido como teto de objetos em alta fidelidade. Ver `docs/00-fontes/05-divergencias-e-lacunas.md`, D2.
+> **Correção de decisão travada, aprovada em 2026-08-16.** O ESTADO fixava "teto de 6 imagens para qualquer template que dependa de identidade preservada", derivado de `[CB]`. A documentação primeiro-parte — autoridade para limites pela hierarquia do prompt-mestre — mostra que **6 é o orçamento de objetos e 5 é o de personagens**. A regra deste repositório é **5 referências de identidade**; 6 permanece válido como teto de objetos em alta fidelidade. Ver `docs/00-fontes/05-divergencias-e-lacunas.md`, D2.
 
 **A ordem de declaração importa.** Literal `[BLOG]`:
 

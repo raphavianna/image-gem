@@ -29,7 +29,7 @@ Atualizado em: **2026-08-16**
 - Prompts gerados em **inglês**; documentação em **português do Brasil**.
 - Entrega inclui Skill, documentação, CLI, servidor MCP e cliente Higgsfield completo.
 - Gramática de blocos rotulados em maiúsculas + cauda `AVOID` curta. Justificada em `docs/00-fontes/04-guia-de-prompts-oficial.md`. Critério de admissão à cauda formalizado em `docs/01-doutrina-hiper-realismo.md`, seção 6.
-- ~~Teto de **6 imagens de referência** para qualquer template que dependa de identidade preservada~~ → **corrigido em 2026-08-16 para 5.** A documentação primeiro-parte decompõe os 14 em orçamentos por papel: **5 personagens** para identidade, 6 objetos em alta fidelidade, 3 referências de estilo. O 6 era o orçamento de objetos. Razão em `docs/00-fontes/05-divergencias-e-lacunas.md`, D2. **Pendente de confirmação do autor no gate de E1.**
+- Teto de **5 imagens de referência** para qualquer template que dependa de identidade preservada. A documentação primeiro-parte decompõe os 14 em orçamentos por papel: **5 personagens** para identidade, **6 objetos** em alta fidelidade, **3 referências de estilo**. Razão em `docs/00-fontes/05-divergencias-e-lacunas.md`, D2. *Corrigido em 2026-08-16 e aprovado pelo autor no gate de E1; a versão anterior desta decisão dizia 6, que era o orçamento de objetos lido como se valesse para identidade.*
 - Resolução padrão de saída: **2K**. 1K e 2K consomem os mesmos 1120 tokens e custam o mesmo (`$0,134`); 4K custa `$0,24`. Fonte em `docs/00-fontes/06-fonte-primaria-ai-google-dev.md`.
 
 ## Pendências externas
