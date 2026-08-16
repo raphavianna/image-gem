@@ -116,11 +116,15 @@ A Skill da E5 valida esse contrato quando o pedido do usuário contém nome de p
 ## Como rodar
 
 ```bash
-# valida todos os 8 templates com seus example_answers
-python3 templates/_resolver.py
+# valida um template resolvendo com example_answers
+imagegem resolve retrato-estudio --out /tmp/spec.json
+imagegem validate /tmp/spec.json
 
-# valida um só
-python3 templates/_resolver.py templates/retrato-estudio.json
+# lista todos os templates
+imagegem templates
+
+# suíte completa de regressão (18 testes negativos + 3 bases + 5 renderizadores)
+python3 tests/test_pipeline.py
 ```
 
 ## O que fica para as etapas seguintes

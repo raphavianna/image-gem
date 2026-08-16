@@ -18,9 +18,9 @@ Atualizado em: **2026-08-16**
 | **E1 — Doutrina de hiper-realismo** | **Concluída e aprovada.** `docs/01-doutrina-hiper-realismo.md`, commit `310c503` |
 | **E2 — Gramática do prompt** | **Concluída e aprovada.** `docs/02-gramatica-do-prompt.md`, `schemas/`, commit `ea52f57` |
 | **E3 — Modalidades** | **Concluída e aprovada.** `docs/03-modalidades/`, commit `4f95674` |
-| **E4 — Biblioteca de templates** | **Concluída, aguardando aprovação no gate.** `templates/` com 8 templates, resolver em `templates/_resolver.py`, `docs/04-templates.md` |
-| E5 — Implementação | **Próxima.** Aguardando aprovação de E4 |
-| E6 — Loop de retroalimentação | Não iniciada |
+| **E4 — Biblioteca de templates** | **Concluída e aprovada.** `templates/`, commit `62fd37d` |
+| **E5 — Implementação** | **Concluída, aguardando aprovação no gate.** `src/imagegem/`, CLI `imagegem`, `mcp_server/`, `.claude/skills/imagegem/`, `docs/05-implementacao.md` |
+| E6 — Loop de retroalimentação | **Próxima.** Aguardando aprovação de E5 |
 | E7 — Validação e fechamento | Não iniciada |
 
 ## Decisões travadas (não reabrir)

@@ -56,33 +56,32 @@ Toda geração registra em `meta.defaults_applied[]` os caminhos que vieram do t
 ## Como rodar
 
 ```bash
-# valida todos os templates renderizando o exemplo de cada um
-python3 templates/_resolver.py
+# lista todos os templates
+imagegem templates
 
-# valida um só
-python3 templates/_resolver.py templates/retrato-estudio.json
-```
+# resolve template + example_answers para spec canônico
+imagegem resolve retrato-estudio --out /tmp/spec.json
 
-Saída esperada:
+# valida o spec resultante contra o checklist
+imagegem validate /tmp/spec.json
 
-```
-TEMPLATE: retrato-estudio.json  (retrato-estudio)
-  regime=generation  has_person=True  ask_before=6 campo(s)
-  OK — corpo 620p, cauda 28p
+# suíte completa de regressão
+python3 tests/test_pipeline.py
 ```
 
 ## Uso programático
 
 ```python
-from _resolver import resolve
+from imagegem import resolver, schema, check
+from imagegem.render import renderiza_modalidade_1
 
-template = json.load(open("templates/retrato-estudio.json"))
+template = schema.load_template("retrato-estudio")
 answers = {
+    "meta.user_request": "...",
     "subject.description": "...",
     "subject.asymmetries": ["...", "..."],
     ...
 }
-spec = resolve(template, answers)
-# spec agora é uma instância válida do schema canônico
-# passa direto para renderiza_modalidade_N do validador
+spec = resolver.resolve(template, answers)
+falhas, corpo, cauda = check.validate(spec)
 ```

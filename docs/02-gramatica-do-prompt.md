@@ -7,8 +7,9 @@ Arquivos desta etapa:
 | Arquivo | Conteúdo |
 |---|---|
 | `schemas/prompt-spec.json` | O schema canônico. Estrutura, cardinalidade, e — no bloco `x-imagegem` — as regras de coerência, o checklist de emissão, os termos proibidos, o orçamento de densidade e os limites de referência |
-| `schemas/validador.py` | Validador de referência e renderizador conceitual da modalidade 1 |
-| `schemas/testes.py` | 17 testes negativos: uma violação por regra, cada uma exigindo que a regra correspondente dispare |
+| `src/imagegem/check.py` | Regras + checklist + `validate(spec)` — implementação canônica (substituiu `schemas/validador.py` na E5) |
+| `src/imagegem/render.py` | Renderizadores das quatro modalidades — implementação canônica (substituiu `schemas/validador.py` na E5) |
+| `tests/test_pipeline.py` | 18 testes negativos + 3 bases + 5 renderizadores (movido de `schemas/testes.py` na E5) |
 | `schemas/exemplos/exemplo-1-retrato-estudio.json` | O exemplo 1 do prompt-mestre instanciado no schema |
 | `schemas/exemplos/exemplo-4-produto-estudio.json` | O exemplo 4 instanciado, prova de que a estrutura serve a cena sem pessoa |
 
@@ -185,7 +186,7 @@ Ambos são exatamente o tipo de erro que o teste de volta existe para pegar: inv
 
 ## 9. Os testes negativos
 
-Um validador que aprova os dois âncoras não prova nada — um que sempre devolve "aprovado" faz o mesmo. `schemas/testes.py` parte de uma instância válida, introduz **uma violação por vez**, e exige que a regra correspondente dispare. Cada caso declara o fragmento que precisa aparecer na mensagem, de modo que passar por acidente — porque outra regra disparou — conta como falha.
+Um validador que aprova os dois âncoras não prova nada — um que sempre devolve "aprovado" faz o mesmo. `tests/test_pipeline.py` parte de uma instância válida, introduz **uma violação por vez**, e exige que a regra correspondente dispare. Cada caso declara o fragmento que precisa aparecer na mensagem, de modo que passar por acidente — porque outra regra disparou — conta como falha.
 
 ```
 17 testes negativos passaram, e as duas bases seguem aprovadas.
@@ -196,18 +197,18 @@ Cobertura: C1, C2, C3, C4, C5, C6, C7, C9, C10, C11, C12, C13, e os itens 1, 5, 
 ## 10. Como rodar
 
 ```bash
-pip install jsonschema
+pip install -e .                  # instala o pacote imagegem e a CLI
 
-python3 schemas/validador.py          # valida e renderiza os exemplos
-python3 schemas/testes.py             # testes negativos
-python3 schemas/validador.py spec.json  # um spec específico
+imagegem validate schemas/exemplos/exemplo-1-retrato-estudio.json
+imagegem render   schemas/exemplos/exemplo-1-retrato-estudio.json --modality 1
+python3 tests/test_pipeline.py    # 18 testes negativos + 3 bases + 5 renderizadores
 ```
 
 ## 11. O que fica para as etapas seguintes
 
 - **E3** escreve os renderizadores das modalidades 2, 3 e 4 sobre este mesmo schema, e move `output.aspect_ratio` e `output.resolution` do corpo do texto para os parâmetros estruturados nas modalidades 3 e 4.
 - **E4** instancia templates, cada um declarando defaults campo a campo sobre este schema, e usa `meta.defaults_applied` para tornar auditável a diferença entre o que o usuário pediu e o que o template decidiu.
-- **E5** substitui `schemas/validador.py` pela implementação em `src/imagegem/`. **As regras não se movem** — continuam em `x-imagegem`, e o código de produção as lê de lá. `validador.py` deixa de ser caminho de execução e permanece como oráculo de teste.
+- **E5** substituiu `schemas/validador.py` pela implementação em `src/imagegem/`. **As regras não se moveram** — continuam em `x-imagegem`, e o código de produção lê de lá. O arquivo antigo foi removido.
 
 ### Pendências abertas nesta etapa
 

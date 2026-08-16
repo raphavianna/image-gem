@@ -21,21 +21,21 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-from validador import (  # noqa: E402
-    SCHEMA_PATH,
+from imagegem import check, schema  # noqa: E402
+from imagegem.render import (
     renderiza_modalidade_1,
     renderiza_modalidade_2,
     renderiza_modalidade_3,
     renderiza_modalidade_4,
-    valida,
 )
 
-RAIZ = Path(__file__).resolve().parent
-BASE_PESSOA = RAIZ / "exemplos" / "exemplo-1-retrato-estudio.json"
-BASE_PRODUTO = RAIZ / "exemplos" / "exemplo-4-produto-estudio.json"
-BASE_EDICAO = RAIZ / "exemplos" / "exemplo-3-edicao-fundo.json"
+def valida(spec, schema_ignored=None):
+    return check.validate(spec)
+
+SCHEMA_PATH = schema.SCHEMA_PATH
+BASE_PESSOA = schema.EXEMPLOS_DIR / "exemplo-1-retrato-estudio.json"
+BASE_PRODUTO = schema.EXEMPLOS_DIR / "exemplo-4-produto-estudio.json"
+BASE_EDICAO = schema.EXEMPLOS_DIR / "exemplo-3-edicao-fundo.json"
 
 
 def m_iso(spec):
