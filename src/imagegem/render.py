@@ -31,16 +31,35 @@ def _frase(*partes) -> str:
     return texto[0].upper() + texto[1:] + "."
 
 
+def _join_and(items):
+    """Oxford comma para qualquer tamanho de lista.
+
+    1 item  → 'x'
+    2 itens → 'x and y'
+    3+      → 'x, y, and z'   ← consertado; antes juntava sem 'and' final
+    """
+    n = len(items)
+    if n == 0:
+        return ""
+    if n == 1:
+        return items[0]
+    if n == 2:
+        return f"{items[0]} and {items[1]}"
+    return f"{', '.join(items[:-1])}, and {items[-1]}"
+
+
 def _bloco_subject(spec):
     s = spec["subject"]
-    assimetrias = ", and ".join(s["asymmetries"])
+    assimetrias = _join_and(s["asymmetries"])
     marcas = ", ".join(s["preserved_marks"])
     return " ".join(
         filter(
             None,
             [
                 _frase(s["description"]),
-                _frase("Her facial structure is specifically asymmetric:", assimetrias),
+                # 'The subject's' em vez de 'Her' — o hardcoded quebrava frase
+                # inteira quando o sujeito era masculino ou não-binário.
+                _frase("The subject's facial structure is specifically asymmetric:", assimetrias),
                 _frase(marcas[0].upper() + marcas[1:]),
                 _frase("Vellus hair is", s.get("vellus_hair", "")),
                 _frase("The expression is", s["expression"]),
@@ -52,11 +71,7 @@ def _bloco_subject(spec):
 def _bloco_wardrobe(spec):
     partes = []
     for peca in spec.get("wardrobe", []):
-        vincos = (
-            ", and ".join(peca["tension_creases"])
-            if len(peca["tension_creases"]) < 3
-            else ", ".join(peca["tension_creases"])
-        )
+        vincos = _join_and(peca["tension_creases"])
         partes.append(
             " ".join(
                 filter(

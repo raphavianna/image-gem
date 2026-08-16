@@ -191,13 +191,28 @@ def flare_requires_source(spec, cfg):
     return ["C7: veiling_flare declarado sem fonte de luz que o justifique (nenhuma fonte com papel 'sun' ou 'practical')"]
 
 
+# Tecido → termos de caimento compatíveis. Ampliado depois do audit da E7 para
+# cobrir tecidos frequentes em editorial. Chave é substring buscada em `fabric`;
+# tecidos compostos (ex. 'wool crepe') batem tanto em 'wool' quanto em 'crepe'.
 CAIMENTO = {
-    "silk": ("fluid", "drape", "narrow", "soft"),
-    "wool": ("heavy", "structured", "broad", "compression", "crepe"),
-    "denim": ("stiff", "angular", "rigid"),
-    "linen": ("crisp", "rumpled", "sharp"),
-    "cotton": ("soft", "moderate", "even"),
-    "leather": ("stiff", "fold", "crease"),
+    "silk": ("fluid", "drape", "narrow", "soft", "flow"),
+    "wool": ("heavy", "structured", "broad", "compression", "crepe", "fold"),
+    "cashmere": ("soft", "drape", "fluid", "supple"),
+    "tweed": ("stiff", "structured", "broad", "textured"),
+    "jersey": ("stretch", "drape", "cling", "soft"),
+    "denim": ("stiff", "angular", "rigid", "crease"),
+    "linen": ("crisp", "rumpled", "sharp", "wrinkle"),
+    "cotton": ("soft", "moderate", "even", "drape"),
+    "leather": ("stiff", "fold", "crease", "structured"),
+    "satin": ("fluid", "drape", "smooth", "flow", "cling"),
+    "velvet": ("heavy", "drape", "plush", "fold"),
+    "chiffon": ("fluid", "flow", "sheer", "drape", "narrow"),
+    "corduroy": ("structured", "wale", "fold", "moderate"),
+    "polyester": ("stretch", "moderate", "crease", "drape"),
+    "nylon": ("stretch", "moderate", "cling"),
+    "canvas": ("stiff", "structured", "rigid", "broad"),
+    "twill": ("structured", "diagonal", "fold", "moderate"),
+    "crepe": ("drape", "structured", "matte", "narrow", "fold"),
 }
 
 
@@ -392,7 +407,14 @@ def ck6_forbidden_terms(spec, cfg, corpo):
     ]
 
 
-CONTEUDO_DE_CENA = re.compile(r"^(no|without|not)\s+\w+", re.IGNORECASE)
+# Padrões de negação de conteúdo de cena que devem ser formulados positivamente.
+# Ampliado depois do audit da E7 — o regex original só pegava (no|without|not)
+# no início, e passavam variações comuns como 'avoiding', 'excluding', 'free of'.
+CONTEUDO_DE_CENA = re.compile(
+    r"^(no|without|not|avoid(?:ing)?|exclud(?:e|ing)|free\s+of|zero|"
+    r"nothing\s+but|absent\s+of|devoid\s+of|lack(?:ing)?|nenhum[ao]?|sem\s+)\b",
+    re.IGNORECASE,
+)
 
 
 def ck7_avoid_tail(spec, cfg, corpo):

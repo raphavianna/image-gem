@@ -160,6 +160,17 @@ def _cmd_runs(args) -> int:
         for fu in pendentes:
             print(f"{fu['run_id']}  {fu['kind']:10} {fu.get('target','-'):32} {fu['description'][:60]}")
         return 0
+    if args.recurring:
+        recorrentes = runs.recurring_signals(limit=args.limit, min_occurrences=args.min_occurrences)
+        if not recorrentes:
+            print(f"nenhum signal recorrente (≥{args.min_occurrences} ocorrências).")
+            return 0
+        for r in recorrentes:
+            campos = ",".join(r["schema_fields"]) or "-"
+            print(f"{r['occurrences']:3}×  {r['doctrine_row'][:48]:48}  campos={campos}")
+            for rid in r["runs"]:
+                print(f"       └─ {rid}")
+        return 0
     metas = runs.list_recent(limit=args.limit, only_reviewed=args.reviewed)
     if not metas:
         print("nenhum registro em runs/.")
@@ -229,6 +240,8 @@ def main(argv=None) -> int:
     p.add_argument("--limit", type=int, default=20)
     p.add_argument("--reviewed", action="store_true", help="só os já avaliados")
     p.add_argument("--pending", action="store_true", help="só follow-ups pendentes de promoção")
+    p.add_argument("--recurring", action="store_true", help="doctrine_rows que aparecem em N+ registros — a regra 'dois já são sinal' da E6")
+    p.add_argument("--min-occurrences", type=int, default=2, help="limiar para --recurring (default 2)")
 
     p = sub.add_parser("review", help="registra a avaliação de um run — insumo da E6")
     p.add_argument("run_id", help="id do run (nome da pasta) ou caminho absoluto")

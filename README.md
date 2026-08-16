@@ -50,6 +50,7 @@ imagegem submit   spec.json --modality 4          # chama o cliente; grava em ru
 imagegem review   RUN_ID --verdict mixed --rating 4 \
                   --signal "..." --follow-up "doctrine|..."   # loop da E6
 imagegem runs --pending                           # follow-ups ainda não promovidos
+imagegem runs --recurring                         # doctrine_row em ≥2 registros — sinal de subir para doutrina
 ```
 
 Detalhes de cada modalidade em [`docs/03-modalidades/`](docs/03-modalidades/).

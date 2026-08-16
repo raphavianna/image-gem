@@ -51,8 +51,10 @@ Do zero, em ambiente Python 3.10+:
 git clone https://github.com/raphavianna/image-gem
 cd image-gem
 pip install -e .
-python3 tests/test_pipeline.py
-# 18 testes negativos passaram, e as três bases seguem aprovadas.
+python3 tests/test_pipeline.py     # 18 negativos + 3 bases + 5 renderizadores
+python3 tests/test_policy.py       # 29 casos da política de conteúdo
+python3 tests/test_resolver.py     # 4 testes do resolver + validação dos 8 templates
+# todos passam
 
 for t in retrato-estudio retrato-ceu-aberto corpo-inteiro-locacao \
          produto-estudio still-moda edicao-troca-fundo \

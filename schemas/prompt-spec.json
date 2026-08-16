@@ -451,7 +451,14 @@
     "descricao": "Regras que JSON Schema não expressa declarativamente. Moram aqui para que E3 e E5 leiam do schema em vez de reimplementar. O validador de referência em schemas/validador.py interpreta o campo 'check'.",
 
     "termos_proibidos": [
-      "photorealistic", "hyper-realistic", "hyperrealistic", "8k", "ultra detailed", "award winning", "masterpiece"
+      "photorealistic", "photo-realistic", "photoreal",
+      "hyper-realistic", "hyperrealistic", "hyper realistic",
+      "ultra-realistic", "ultrarealistic", "ultra realistic",
+      "8k", "8k uhd", "4k uhd",
+      "ultra detailed", "ultra-detailed",
+      "razor-sharp", "razor sharp", "tack sharp", "tack-sharp",
+      "award winning", "award-winning",
+      "masterpiece", "best quality", "highest quality"
     ],
 
     "orcamento_densidade": {

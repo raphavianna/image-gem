@@ -10,7 +10,7 @@ Etapa **E6**. Fecha o ciclo entre gerar e aprender. Sem esta etapa, tudo que as 
 | `src/imagegem/runs.py` | `register(...)` grava o registro completo; `review(...)` acrescenta a avaliação; `list_recent`, `pending_follow_ups` para leitura. Tudo validado contra o schema. |
 | `imagegem submit` | Escreve o registro em `runs/{stamp}-{slug}/` a cada chamada — real ou simulada. Sem opt-out. |
 | `imagegem review RUN_ID` | Acrescenta `verdict`, `rating`, `signals[]`, `follow_ups[]`. Última avaliação vence. |
-| `imagegem runs` | Lista registros com verdict. `--reviewed` filtra por avaliados. `--pending` mostra follow-ups não promovidos. |
+| `imagegem runs` | Lista registros com verdict. `--reviewed` filtra por avaliados. `--pending` mostra follow-ups não promovidos. `--recurring` agrupa `doctrine_row` em ≥2 registros — a regra 'dois já são sinal'. |
 | `docs/04-aprendizados.md` | Log vivo. Cada linha aponta para um registro, commit ou arquivo — aprendizado sem prova rastreável não entra. |
 | `runs/EXEMPLO-e6-registro-ancora/` | Registro-âncora versionado. Padrão do formato para os demais. |
 
@@ -66,7 +66,7 @@ O campo `review.signals[]` mapeia problemas observados na saída para linhas da 
 }
 ```
 
-Quando um mesmo `doctrine_row` aparece em dois registros diferentes, a Skill sinaliza para o autor: a correção precisa subir para a doutrina, não para o template específico.
+Quando um mesmo `doctrine_row` aparece em dois registros diferentes, `imagegem runs --recurring` lista os registros — sinal de que a correção precisa subir para a doutrina, não para o template específico. A regra `dois já são sinal` está implementada em `runs.recurring_signals()`.
 
 ## Follow-ups
 

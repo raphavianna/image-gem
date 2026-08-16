@@ -2,6 +2,8 @@
 
 Texto colável para o painel `cloud.higgsfield.ai`, mais o mapeamento dos controles nativos do painel. É a modalidade de quem já opera na Higgsfield e quer manter o fluxo.
 
+> **Aviso — L7 aberta.** A Higgsfield expõe `/nano-banana` como endpoint único, sem distinguir Pro (`gemini-3-pro-image`) de Flash (`gemini-3.1-flash-image`) na URL nem em parâmetro documentado. Toda referência a "target: Nano Banana Pro" nesta página é **assumption**, não fato verificado. Se a Higgsfield estiver roteando para Flash em contas standard, a qualidade entregue é inferior à prometida — silenciosamente. Detalhes em `docs/00-fontes/05-divergencias-e-lacunas.md` L7. Só resolve empiricamente com credencial e comparação contra a modalidade 4.
+
 ## O que muda em relação à modalidade 1
 
 O corpo textual é **o mesmo**, com uma diferença: **a proporção sai do texto e vai para o controle da interface**. A Higgsfield expõe `aspect_ratio` como controle nativo, então verbalizar no prompt é redundante e a duplicação pode confundir o modelo — o campo estruturado vence o texto.
@@ -26,7 +28,7 @@ Do OpenAPI `[HF]`, `POST /nano-banana`:
 
 | Controle no painel | Origem no schema | Observação |
 |---|---|---|
-| Model | fixo — Nano Banana | endpoint `/nano-banana`; variante Pro vs Flash não distinguível pela URL — L7 |
+| Model | fixo — Nano Banana | endpoint `/nano-banana`; **variante Pro vs Flash é assumption, não fato** — L7, ver aviso abaixo |
 | Prompt | corpo + cauda concatenados | copiado literalmente |
 | Aspect ratio | `output.aspect_ratio` | dez valores mais `auto`; `auto` herda do input em modo de edição |
 | Number of images | 1 por default | máximo 4 |

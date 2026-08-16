@@ -226,3 +226,36 @@ def pending_follow_ups(limit: int = 100) -> list[dict[str, Any]]:
                     **fu,
                 })
     return out
+
+
+def recurring_signals(limit: int = 200, min_occurrences: int = 2) -> list[dict[str, Any]]:
+    """Signals cuja `doctrine_row` aparece em ≥N registros revisados distintos.
+
+    A regra operacional da E6 diz: 'toda correção que aparece duas vezes vira
+    issue de doutrina/template'. Este é o mecanismo que sustenta a promessa em
+    docs/06-loop.md — antes existia só na doc, agora existe no código.
+    """
+    contagem: dict[str, dict[str, Any]] = {}
+    for meta in list_recent(limit=limit, only_reviewed=True):
+        vistos_neste_run: set[str] = set()
+        for sinal in meta["review"].get("signals", []) or []:
+            linha = sinal.get("doctrine_row") or sinal.get("signal") or ""
+            if not linha or linha in vistos_neste_run:
+                continue
+            vistos_neste_run.add(linha)
+            entry = contagem.setdefault(
+                linha,
+                {"doctrine_row": linha, "occurrences": 0, "runs": [], "schema_fields": set()},
+            )
+            entry["occurrences"] += 1
+            entry["runs"].append(meta["id"])
+            if sinal.get("schema_field"):
+                entry["schema_fields"].add(sinal["schema_field"])
+
+    recorrentes = [
+        {**e, "schema_fields": sorted(e["schema_fields"])}
+        for e in contagem.values()
+        if e["occurrences"] >= min_occurrences
+    ]
+    recorrentes.sort(key=lambda x: -x["occurrences"])
+    return recorrentes

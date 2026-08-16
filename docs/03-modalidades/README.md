@@ -8,7 +8,7 @@ Etapa **E3**. Cada modalidade é um **renderizador sobre o schema canônico** de
 |---|---|---|---|---|---|
 | 1 | Interface Gemini | `gemini.google.com` (chat) | verbalizadas na prosa | verbalizadas no texto | `gemini-3-pro-image` |
 | 2 | Interface Higgsfield | painel `cloud.higgsfield.ai` | upload no painel | controles do painel; **sem `resolution`** | `/nano-banana` (variante `[L7]`) |
-| 3 | Conector Higgsfield | `POST /nano-banana` | `input_images[].image_url` (até 8) | `aspect_ratio` no payload; **sem `resolution`** | `/nano-banana` (variante `[L7]`) |
+| 3 | Conector Higgsfield | `POST /nano-banana` | `input_images[].image_url` (até 8) | `aspect_ratio` no payload; **sem `resolution`** | `/nano-banana` — variante **assumida** Pro, ver `[L7]` |
 | 4 | API Gemini | `google-genai` SDK | itens da lista `contents` (até 14) | `ImageConfig.aspect_ratio` e `image_size` | `gemini-3-pro-image` |
 
 ## O que é compartilhado, o que é próprio

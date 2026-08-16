@@ -2,6 +2,8 @@
 
 `POST /nano-banana` da API Higgsfield, com o ciclo assíncrono completo — submissão, polling e recuperação. É a modalidade de produção pelo caminho Higgsfield: batch, cliente próprio, integração de webhook.
 
+> **Aviso — L7 aberta.** `/nano-banana` é endpoint único; a documentação `[HF]` **não** documenta qual variante do Nano Banana ele roteia (Pro vs Flash). Toda menção a "target: gemini-3-pro-image" nesta página é **assumption operacional**, não fato verificado. Se o endpoint estiver roteando para Flash em contas standard, a qualidade entregue por esta modalidade é inferior à prometida. Antes de padronizar a modalidade 3 para produção crítica, execute a validação empírica descrita em `docs/00-fontes/05-divergencias-e-lacunas.md` L7 — uma chamada real via modalidade 3 e outra via modalidade 4 do mesmo spec, comparadas. Sem essa validação, prefira a modalidade 4 para trabalhos onde variante Pro é requisito.
+
 ## Envelope da chamada
 
 Contrato executável em `[HF]` (openapi.json). O renderizador devolve exatamente:
