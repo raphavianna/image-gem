@@ -4,6 +4,8 @@ Arquivo de retomada. Leia isto primeiro ao abrir uma sessão nova.
 
 Atualizado em: **2026-08-16**
 
+> **Todas as sete etapas concluídas e aprovadas.** O projeto está em estado de entrega. Para retomar, comece pelo `README.md` e pela `docs/07-validacao/`. As pendências permanentes desta entrega são L3 e L7 — ambas exigem credencial real (`GEMINI_API_KEY` e `HF_API_KEY_ID`/`SECRET`) e produziriam a primeira entrada não-retroativa em `docs/04-aprendizados.md`.
+
 ## Como retomar
 
 1. Leia `docs/PROMPT-MESTRE.md` — é a constituição do projeto: papel, doutrina, checklist de emissão, gramática, as quatro modalidades e a decomposição em etapas.
@@ -20,8 +22,8 @@ Atualizado em: **2026-08-16**
 | **E3 — Modalidades** | **Concluída e aprovada.** `docs/03-modalidades/`, commit `4f95674` |
 | **E4 — Biblioteca de templates** | **Concluída e aprovada.** `templates/`, commit `62fd37d` |
 | **E5 — Implementação** | **Concluída e aprovada.** `src/imagegem/`, `mcp_server/`, `.claude/skills/imagegem/`, commit `1cad865` |
-| **E6 — Loop de retroalimentação** | **Concluída, aguardando aprovação no gate.** `schemas/run-record.json`, `docs/04-aprendizados.md`, `docs/06-loop.md`, `runs/EXEMPLO-e6-registro-ancora/`, comandos `runs` e `review` na CLI |
-| E7 — Validação e fechamento | **Próxima.** Aguardando aprovação de E6 |
+| **E6 — Loop de retroalimentação** | **Concluída e aprovada.** `schemas/run-record.json`, `docs/04-aprendizados.md`, `docs/06-loop.md`, commit `6b08674` |
+| **E7 — Validação e fechamento** | **Concluída.** `README.md` na raiz, `docs/07-validacao/` com bateria executada — 27 comandos com exit 0 |
 
 ## Decisões travadas (não reabrir)
 
