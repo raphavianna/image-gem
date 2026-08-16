@@ -1,0 +1,171 @@
+{
+  "spec_version": "1.0",
+  "meta": {
+    "id": "exemplo-1-retrato-estudio",
+    "modality": 1,
+    "target_model": "gemini-3-pro-image",
+    "user_request": "uma foto profissional de uma mulher de uns 30 e poucos anos para perfil corporativo",
+    "template": "retrato-estudio"
+  },
+  "output": {
+    "aspect_ratio": "4:5",
+    "resolution": "2K",
+    "orientation": "vertical"
+  },
+  "scene": {
+    "regime": "generation",
+    "headline": "Editorial studio portrait, single subject, waist-up",
+    "has_person": true,
+    "setting": "studio"
+  },
+  "subject": {
+    "description": "A 34-year-old woman with warm olive skin, dark brown eyes and shoulder-length black hair worn loose with a natural side part",
+    "asymmetries": [
+      "the left eyebrow sits marginally higher than the right",
+      "the left corner of the mouth lifts slightly more"
+    ],
+    "preserved_marks": [
+      "a 2mm mole below the outer corner of the right eye",
+      "three faint freckles across the bridge of the nose",
+      "a 4mm pale scar along the left jawline"
+    ],
+    "expression": "a closed-mouth half-smile caught between beats, the eyes engaged and the mouth not yet fully settled",
+    "vellus_hair": "visible along the jaw and at the hairline, catching the rim light as a fine halo"
+  },
+  "wardrobe": [
+    {
+      "garment": "a charcoal wool-crepe blazer over a bone raw-silk shell",
+      "fabric": "wool crepe",
+      "weave": "the wool shows its twill weave at close range",
+      "tension_creases": [
+        "compression creases at the inner elbow",
+        "a slight roll where the collar meets the neck"
+      ]
+    }
+  ],
+  "camera": {
+    "body": "Phase One XF IQ4 150MP",
+    "sensor_format": "medium_format",
+    "focal_length_mm": 110,
+    "aperture_f": 4,
+    "shutter": "1/250s",
+    "iso": 50,
+    "distance_m": 2.1,
+    "height": "at subject eye height",
+    "focal_plane": {
+      "in_focus": [
+        "the near eye"
+      ],
+      "out_of_focus": [
+        "the far eye falls just outside critical focus",
+        "the blazer shoulder renders soft"
+      ]
+    },
+    "perspective_note": "Medium-format 110mm compression gives shallow facial perspective with no wide-angle nose enlargement"
+  },
+  "optics": {
+    "bokeh_character": "smooth and rounded at centre with mild cat-eye deformation toward the frame edges",
+    "chromatic_aberration": "Faint longitudinal chromatic aberration reads as a hairline magenta-green fringe on the specular highlight at the hair edge",
+    "vignetting": "Mechanical vignetting of roughly one third of a stop at the corners"
+  },
+  "lighting": {
+    "sources": [
+      {
+        "role": "key",
+        "modifier": "1.5 metre indirect octabox",
+        "size_m": 1.5,
+        "distance_m": 1.4,
+        "azimuth_deg": 40,
+        "elevation": "25 degrees above the eye line",
+        "colour_temp_k": 5600
+      },
+      {
+        "role": "fill",
+        "modifier": "1.2 metre white bounce card camera-right",
+        "size_m": 1.2,
+        "distance_m": 1.8,
+        "azimuth_deg": 320,
+        "elevation": "at eye line",
+        "colour_temp_k": 5600
+      },
+      {
+        "role": "rim",
+        "modifier": "gridded strip box behind and camera-right",
+        "size_m": 0.9,
+        "distance_m": 1.6,
+        "azimuth_deg": 150,
+        "elevation": "slightly above the shoulder line",
+        "colour_temp_k": 5600
+      },
+      {
+        "role": "background",
+        "modifier": "separate wash on mid-grey seamless",
+        "size_m": 1.2,
+        "distance_m": 1.5,
+        "azimuth_deg": 270,
+        "elevation": "at subject height",
+        "colour_temp_k": 5600,
+        "stops_relative_to_key": -2
+      }
+    ],
+    "key_fill_ratio": "3:1",
+    "penumbra": {
+      "width_cm": "3 to 4",
+      "location": "along the jaw"
+    },
+    "shadow_direction": "falls down and camera-right, consistent for every element in the scene",
+    "catchlight": {
+      "shape": "a soft-cornered octagon mirroring the octabox",
+      "position": "the ten o'clock position",
+      "far_eye": "smaller and dimmer in the far eye"
+    },
+    "background_treatment": "The mid-grey seamless background is lit separately at two stops under the key and falls off toward the frame corners",
+    "mixed_temperature": "All sources at 5600K with no mixed colour temperature"
+  },
+  "skin": {
+    "pore_scale": "Rendered at true pore scale for this framing",
+    "specular_zones": "Sebum specular sheen on the nose bridge, the centre of the forehead and the cupid's bow, with the T-zone measurably more reflective than the cheeks",
+    "subsurface": "Subsurface scattering warms the ear rims and the outer nostrils to a faint red",
+    "regional_variation": "Fine dry texture on the lips with two visible vertical creases",
+    "capillary": "Capillary flush across the cheekbones",
+    "makeup": "Makeup is present but minimal, and the skin reads as skin rather than as a retouched surface"
+  },
+  "render": {
+    "colour_profile": "Kodak Portra 400",
+    "palette_note": "restrained saturation, warm midtones, greens pulled slightly cool",
+    "highlight_rolloff": "Highlight rolloff is gradual with no clipped white on the forehead",
+    "black_point": "The deepest shadow in the blazer sits near 8 percent luminance rather than pure black",
+    "grain": "Fine luminance grain consistent with ISO 50 medium format",
+    "chroma_noise": "faint chroma noise on the shadow side of the neck"
+  },
+  "frame": {
+    "composition": "Subject positioned slightly camera-left of centre with the gaze opening into the larger negative space",
+    "headroom": "Headroom is tight, roughly 6 percent of frame height above the crown"
+  },
+  "imperfection_budget": [
+    {
+      "category": "styling",
+      "specific": "One strand of hair has fallen across the forehead and has not been styled back"
+    },
+    {
+      "category": "manufacturing",
+      "specific": "One shoulder seam sits a few millimetres off square"
+    }
+  ],
+  "capture_reality": "This is a single working frame from a commercial session",
+  "avoid": [
+    "illustration",
+    "3D render",
+    "CGI",
+    "digital painting",
+    "airbrushed or waxy skin",
+    "uniform poreless texture",
+    "perfect facial symmetry",
+    "glowing teeth",
+    "oversaturated colour",
+    "HDR halos",
+    "watermark",
+    "text overlay",
+    "malformed hands"
+  ]
+}

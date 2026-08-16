@@ -15,9 +15,9 @@ Atualizado em: **2026-08-16**
 | Etapa | Estado |
 |---|---|
 | **E0 — Fontes** | **Concluída e aprovada.** `docs/00-fontes/`, commit `e95ac90`. **Revisada em 2026-08-16** com a fonte primária liberada — ver `00-fontes/06-fonte-primaria-ai-google-dev.md` |
-| **E1 — Doutrina de hiper-realismo** | **Concluída, aguardando aprovação no gate.** `docs/01-doutrina-hiper-realismo.md` |
-| E2 — Gramática do prompt | **Próxima.** Aguardando aprovação de E1 |
-| E3 — Modalidades | Não iniciada |
+| **E1 — Doutrina de hiper-realismo** | **Concluída e aprovada.** `docs/01-doutrina-hiper-realismo.md`, commit `310c503` |
+| **E2 — Gramática do prompt** | **Concluída, aguardando aprovação no gate.** `docs/02-gramatica-do-prompt.md`, `schemas/` |
+| E3 — Modalidades | **Próxima.** Aguardando aprovação de E2 |
 | E4 — Biblioteca de templates | Não iniciada |
 | E5 — Implementação | Não iniciada |
 | E6 — Loop de retroalimentação | Não iniciada |
@@ -30,6 +30,7 @@ Atualizado em: **2026-08-16**
 - Entrega inclui Skill, documentação, CLI, servidor MCP e cliente Higgsfield completo.
 - Gramática de blocos rotulados em maiúsculas + cauda `AVOID` curta. Justificada em `docs/00-fontes/04-guia-de-prompts-oficial.md`. Critério de admissão à cauda formalizado em `docs/01-doutrina-hiper-realismo.md`, seção 6.
 - Teto de **5 imagens de referência** para qualquer template que dependa de identidade preservada. A documentação primeiro-parte decompõe os 14 em orçamentos por papel: **5 personagens** para identidade, **6 objetos** em alta fidelidade, **3 referências de estilo**. Razão em `docs/00-fontes/05-divergencias-e-lacunas.md`, D2. *Corrigido em 2026-08-16 e aprovado pelo autor no gate de E1; a versão anterior desta decisão dizia 6, que era o orçamento de objetos lido como se valesse para identidade.*
+- Orçamento de densidade **por regime**, não banda única: 500–650 para geração com pessoa, 350–560 sem pessoa, 250–400 para edição. A banda 350–500 do prompt-mestre reprovava dois dos três exemplos âncora, e o "~450" atribuído ao exemplo 1 erra por ~150 palavras — ele tem 597. Derivação em `docs/02-gramatica-do-prompt.md`, seção 3. *Decidido pelo autor no gate de E2, em 2026-08-16.*
 - Resolução padrão de saída: **2K**. 1K e 2K consomem os mesmos 1120 tokens e custam o mesmo (`$0,134`); 4K custa `$0,24`. Fonte em `docs/00-fontes/06-fonte-primaria-ai-google-dev.md`.
 
 ## Pendências externas

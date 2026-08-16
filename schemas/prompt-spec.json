@@ -1,0 +1,541 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/raphavianna/image-gem/schemas/prompt-spec.json",
+  "title": "image-gem — schema canônico do prompt",
+  "description": "Representação intermediária única de um pedido de imagem. Toda modalidade é um renderizador sobre este schema. Definido na etapa E2; a doutrina que ele codifica está em docs/01-doutrina-hiper-realismo.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec_version", "meta", "output", "scene", "camera", "optics", "lighting", "render", "frame", "imperfection_budget", "avoid"],
+
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Versão do schema. Incrementa em mudança incompatível."
+    },
+
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["modality", "target_model", "user_request"],
+      "properties": {
+        "id": { "type": "string", "description": "Identificador do spec, usado no registro de execução em runs/." },
+        "modality": {
+          "type": "integer",
+          "enum": [1, 2, 3, 4],
+          "description": "1 interface Gemini, 2 interface Higgsfield, 3 conector Higgsfield, 4 API Gemini."
+        },
+        "target_model": {
+          "type": "string",
+          "enum": ["gemini-3-pro-image", "gemini-3.1-flash-image", "gemini-2.5-flash-image", "gemini-3.1-flash-lite-image"],
+          "description": "Identificador aceito pela API. Fonte [GAI], docs/00-fontes/06-fonte-primaria-ai-google-dev.md."
+        },
+        "user_request": { "type": "string", "description": "O pedido em linguagem natural, preservado literalmente para auditoria." },
+        "template": { "type": "string", "description": "Template de E4 que originou este spec, se houver." },
+        "defaults_applied": {
+          "type": "array",
+          "description": "Campos resolvidos por default do template em vez de pelo usuário. Regra de pedidos subespecificados do prompt-mestre.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["field", "source"],
+            "properties": {
+              "field": { "type": "string" },
+              "source": { "type": "string", "description": "Template ou regra que forneceu o valor." }
+            }
+          }
+        }
+      }
+    },
+
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["aspect_ratio", "resolution"],
+      "description": "Parâmetros estruturados. Nas modalidades 1 e 2 são verbalizados no texto; nas 3 e 4 saem do corpo e vão para a chamada.",
+      "properties": {
+        "aspect_ratio": {
+          "type": "string",
+          "enum": ["1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"],
+          "description": "Dez valores confirmados em [GAI]. A docstring do [SDK] lista oito e está desatualizada — ver D1."
+        },
+        "resolution": {
+          "type": "string",
+          "enum": ["1K", "2K", "4K"],
+          "default": "2K",
+          "description": "1K e 2K consomem os mesmos 1120 tokens e custam o mesmo ($0,134). Default 2K por decisão travada no ESTADO."
+        },
+        "orientation": { "type": "string", "enum": ["vertical", "horizontal", "square"] }
+      }
+    },
+
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["regime", "headline", "has_person", "setting"],
+      "properties": {
+        "regime": {
+          "type": "string",
+          "enum": ["generation", "edit", "composition"],
+          "description": "generation = texto puro; edit = imagem ancorada; composition = multi-referência."
+        },
+        "headline": {
+          "type": "string",
+          "minLength": 10,
+          "description": "Primeira linha do prompt: tipo de foto, número de sujeitos, enquadramento, proporção."
+        },
+        "has_person": { "type": "boolean", "description": "Governa a bifurcação 4a/4b do checklist de emissão." },
+        "setting": { "type": "string", "enum": ["studio", "exterior", "interior_practical"] },
+        "intent": {
+          "type": "string",
+          "description": "Contexto e intenção de uso. [GAI] recomenda declarar propósito: 'provide context and intent'."
+        }
+      }
+    },
+
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Obrigatório quando scene.has_person é true (regra de coerência C-PERSON).",
+      "required": ["description", "asymmetries", "preserved_marks", "expression"],
+      "properties": {
+        "description": { "type": "string", "minLength": 20 },
+        "asymmetries": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Assimetrias específicas em eixos independentes. Genéricas reprovam o checklist item 4a.",
+          "items": { "type": "string", "minLength": 10 }
+        },
+        "preserved_marks": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Pintas, sardas, cicatrizes com posição e tamanho. Portador primário de identidade entre gerações.",
+          "items": { "type": "string", "minLength": 5 }
+        },
+        "expression": { "type": "string" },
+        "vellus_hair": { "type": "string", "description": "Pelo velus no maxilar, buço e halo da linha do cabelo." }
+      }
+    },
+
+    "wardrobe": {
+      "type": "array",
+      "description": "Peças de vestuário. Cada uma declara tecido, trama, vincos e caimento (eixo 5).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["garment", "fabric", "weave", "tension_creases"],
+        "properties": {
+          "garment": { "type": "string" },
+          "fabric": { "type": "string", "description": "Tecido nomeado. Determina o caimento esperado — ver regra C9." },
+          "weave": { "type": "string", "description": "Trama visível na escala do enquadramento." },
+          "tension_creases": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "drape": { "type": "string", "description": "Caimento sob gravidade, coerente com o peso do tecido nomeado." },
+          "wear": { "type": "string", "description": "Desgaste: bordas puídas, pilling, brilho de uso." }
+        }
+      }
+    },
+
+    "camera": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["body", "sensor_format", "focal_length_mm", "aperture_f", "shutter", "iso", "distance_m", "height", "focal_plane"],
+      "properties": {
+        "body": { "type": "string" },
+        "sensor_format": {
+          "type": "string",
+          "enum": ["medium_format", "full_frame_35mm", "aps_c"],
+          "description": "Determina compressão de perspectiva e profundidade de campo para a mesma focal."
+        },
+        "focal_length_mm": { "type": "number", "exclusiveMinimum": 0 },
+        "aperture_f": { "type": "number", "exclusiveMinimum": 0, "description": "Abertura. Governa plano focal, bokeh e vinhetagem — regra C2." },
+        "shutter": { "type": "string", "description": "Velocidade, ex. '1/250s'. Governa congelamento ou arrasto — regra C3." },
+        "iso": { "type": "integer", "minimum": 25, "description": "Governa grão e ruído de croma — regra C1." },
+        "distance_m": { "type": "number", "exclusiveMinimum": 0, "description": "Distância câmera-sujeito. Governa a perspectiva do rosto independentemente da focal." },
+        "height": { "type": "string", "description": "Altura da câmera em relação à linha dos olhos." },
+        "focal_plane": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["in_focus", "out_of_focus"],
+          "description": "Plano focal explícito. Reprova o checklist se ausente — regra C2.",
+          "properties": {
+            "in_focus": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "out_of_focus": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+          }
+        },
+        "focus_stacking": { "type": "boolean", "default": false, "description": "false declara quadro único com queda de foco honesta." },
+        "perspective_note": { "type": "string", "description": "Consequência declarada do par formato+focal, ex. compressão facial sem alargamento de nariz." }
+      }
+    },
+
+    "optics": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Imperfeições ópticas reais. Primeiro item da ordem de sacrifício do orçamento de densidade.",
+      "properties": {
+        "bokeh_character": { "type": "string", "description": "Inclui deformação em olho-de-gato nas bordas, se aplicável." },
+        "chromatic_aberration": { "type": "string", "description": "Aberração cromática longitudinal em bordas de alto contraste." },
+        "vignetting": { "type": "string", "description": "Vinhetagem mecânica, em stops nos cantos." },
+        "distortion": { "type": "string", "description": "Barril ou almofada, coerente com a focal." },
+        "veiling_flare": { "type": "string", "description": "Só admissível com fonte de luz no quadro ou em ângulo de incidência — regra C7." }
+      }
+    },
+
+    "lighting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sources", "key_fill_ratio", "shadow_direction"],
+      "properties": {
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Cada fonte declara as seis grandezas do eixo 2. Checklist item 1.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["role", "modifier", "size_m", "distance_m", "azimuth_deg", "elevation", "colour_temp_k"],
+            "properties": {
+              "role": { "type": "string", "enum": ["key", "fill", "rim", "background", "practical", "sun", "sky"] },
+              "modifier": { "type": "string", "description": "Octabox, beauty dish, strip com grid, scrim, bounce card, fonte nua." },
+              "size_m": { "type": ["number", "null"], "description": "Tamanho físico em metros. null apenas para sol e céu, cujo tamanho angular é conhecido." },
+              "distance_m": { "type": ["number", "null"] },
+              "azimuth_deg": { "type": "number", "minimum": 0, "maximum": 360 },
+              "elevation": { "type": "string", "description": "Elevação em graus, com a referência (acima da linha dos olhos, do horizonte)." },
+              "colour_temp_k": { "type": "integer", "minimum": 1000, "maximum": 20000 },
+              "feathering": { "type": "string" },
+              "stops_relative_to_key": { "type": "number", "description": "Exposição relativa à key, em stops. Usado por fundo e preenchimento." }
+            }
+          }
+        },
+        "key_fill_ratio": {
+          "type": "string",
+          "pattern": "^[0-9]+(\\.[0-9]+)?:[0-9]+(\\.[0-9]+)?$",
+          "description": "Razão numérica, ex. '3:1'. Checklist item 1."
+        },
+        "penumbra": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["width_cm", "location"],
+          "description": "Consequência do tamanho angular da fonte principal — regra C4.",
+          "properties": {
+            "width_cm": { "type": "string", "description": "Largura em cm, ex. '3 a 4'." },
+            "location": { "type": "string" }
+          }
+        },
+        "shadow_direction": {
+          "type": "string",
+          "minLength": 5,
+          "description": "Direção única da sombra projetada, válida para todos os elementos. Checklist item 3."
+        },
+        "contact_shadow": { "type": "string", "description": "Sombra de contato e oclusão ambiente nos pontos de toque." },
+        "catchlight": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["shape", "position"],
+          "description": "Obrigatório quando há pessoa. A forma corresponde ao modificador da key — regra C5.",
+          "properties": {
+            "shape": { "type": "string" },
+            "position": { "type": "string" },
+            "far_eye": { "type": "string", "description": "Menor e mais fraco no olho distante." }
+          }
+        },
+        "mixed_temperature": { "type": "string", "description": "Divergência de temperatura entre fontes. Assinatura de exterior real." },
+        "background_treatment": { "type": "string" }
+      }
+    },
+
+    "skin": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Obrigatório quando scene.has_person é true. Checklist item 4a.",
+      "required": ["pore_scale", "specular_zones"],
+      "properties": {
+        "pore_scale": { "type": "string", "description": "Escala de poro correta para o enquadramento." },
+        "specular_zones": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Especular de sebo com gradiente por região. A zona T mais reflexiva que as maçãs."
+        },
+        "subsurface": { "type": "string", "description": "Espalhamento subsuperficial em tecido fino." },
+        "regional_variation": { "type": "string", "description": "Textura variando por região do rosto." },
+        "capillary": { "type": "string" },
+        "makeup": { "type": "string" }
+      }
+    },
+
+    "materials": {
+      "type": "array",
+      "description": "Obrigatório quando há superfície nomeada. Checklist item 4b. Avaliado independentemente de skin.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["surface", "finish", "specular_response"],
+        "properties": {
+          "surface": { "type": "string" },
+          "finish": {
+            "type": "string",
+            "enum": ["polished", "brushed", "matte", "honed", "coated_glass", "leather", "textile", "painted", "raw"],
+            "description": "Determina a resposta especular esperada — tabela do eixo 3 da doutrina."
+          },
+          "specular_response": { "type": "string", "minLength": 15, "description": "Como a superfície responde à luz: espalha, reflete, transmite. Não repetir aqui o conteúdo do reflexo — isso é reflects." },
+          "reflects": { "type": "string", "description": "Conteúdo do reflexo desta superfície, em forma curta. Consolidado no bloco REFLECTION GEOMETRY na renderização, não repetido por material. Nada pode implicar fonte não declarada — regra C12." },
+          "typography": { "type": "string", "description": "Tipografia legível e com kerning correto, quando a superfície contém texto." },
+          "manufacturing_defect": { "type": "string" }
+        }
+      }
+    },
+
+    "anatomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Eixo 4. Campos preenchidos conforme o que está visível no quadro.",
+      "properties": {
+        "hands": { "type": "string" },
+        "teeth": { "type": "string" },
+        "eyes": { "type": "string", "description": "Anel límbico, vascularização da esclera, fibras de íris, olhar assimétrico." },
+        "hair": { "type": "string", "description": "Separação de mechas e fios soltos." },
+        "ears": { "type": "string" }
+      }
+    },
+
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Eixo 6. Campos solares obrigatórios quando scene.setting é exterior — regra C10.",
+      "properties": {
+        "description": { "type": "string" },
+        "horizon": { "type": "string" },
+        "solar_elevation_deg": { "type": "number", "minimum": -20, "maximum": 90 },
+        "solar_azimuth_deg": { "type": "number", "minimum": 0, "maximum": 360 },
+        "sky_condition": { "type": "string", "enum": ["clear", "overcast", "high_cloud", "broken_cloud"] },
+        "sky_fill": { "type": "string", "description": "Preenchimento vindo da cúpula do céu, com temperatura e stops abaixo do sol." },
+        "atmospheric_perspective": { "type": "string" },
+        "contact_points": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "render": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["colour_profile", "highlight_rolloff", "black_point", "grain"],
+      "properties": {
+        "colour_profile": { "type": "string", "minLength": 5, "description": "Emulsão nomeada ou perfil digital neutro declarado." },
+        "palette_note": { "type": "string" },
+        "highlight_rolloff": { "type": "string", "description": "Rolloff gradual, sem estouro." },
+        "black_point": { "type": "string", "description": "Sombra mais profunda em percentual de luminância, não zero absoluto." },
+        "grain": { "type": "string", "minLength": 10, "description": "Grão de luminância proporcional ao ISO — regra C1." },
+        "chroma_noise": { "type": "string" }
+      }
+    },
+
+    "frame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["composition"],
+      "properties": {
+        "composition": { "type": "string" },
+        "headroom": { "type": "string" },
+        "crop": { "type": "string", "description": "Enquadramento. Recurso composicional contra modos de falha anatômicos." }
+      }
+    },
+
+    "imperfection_budget": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "description": "De 1 a 3 imperfeições controladas. Checklist item 5. Cardinalidade imposta pelo schema.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["category", "specific"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["styling", "motion", "manufacturing", "environment", "capture"]
+          },
+          "specific": {
+            "type": "string",
+            "minLength": 20,
+            "description": "Localização e natureza específicas. Formulação genérica reprova o checklist item 5."
+          }
+        }
+      }
+    },
+
+    "reflection_closure": {
+      "type": "string",
+      "description": "Cláusula de fechamento do bloco REFLECTION GEOMETRY: nada nos reflexos implica fonte de luz não declarada. Impede o modelo de inventar iluminação."
+    },
+
+    "capture_reality": {
+      "type": "string",
+      "description": "Declaração de intenção e regime de produção. [GAI]: 'provide context and intent'."
+    },
+
+    "avoid": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "description": "Cauda de restrições. Apenas modos de falha de renderização — conteúdo de cena se declara positivamente. Checklist item 7.",
+      "items": { "type": "string", "minLength": 3 }
+    },
+
+    "edit": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Obrigatório quando scene.regime é edit. Gramática invertida: preservação antes da alteração.",
+      "required": ["preserve", "replace", "light_reconciliation"],
+      "properties": {
+        "preserve": {
+          "type": "array",
+          "minItems": 1,
+          "description": "O que permanece idêntico, declarado antes da alteração. [BLOG]: 'state what must stay identical before you state what changes'.",
+          "items": { "type": "string" }
+        },
+        "replace": { "type": "string", "minLength": 20 },
+        "light_reconciliation": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Como o novo ambiente justifica a luz já gravada no sujeito."
+        },
+        "integration": { "type": "string", "description": "Sombra de contato, reflexo, perspectiva atmosférica, casamento de paleta." }
+      }
+    },
+
+    "character": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Consistência de personagem entre gerações. Seção 5 da doutrina.",
+      "required": ["invariant", "variable"],
+      "properties": {
+        "invariant": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Declarado sempre primeiro. Geometria facial, marcas, assimetrias, tom de pele.",
+          "items": { "type": "string" }
+        },
+        "variable": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Só varia o que foi explicitamente autorizado a variar.",
+          "items": { "type": "string" }
+        },
+        "identity_reference_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5,
+          "description": "Teto de 5 referências de identidade no gemini-3-pro-image. Fonte [GAI], decisão travada no ESTADO em 2026-08-16."
+        },
+        "object_reference_count": { "type": "integer", "minimum": 0, "maximum": 6 },
+        "style_reference_count": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "reference_chain": { "type": "string", "description": "Realimentar a saída aprovada do turno anterior. [GAI], seção de consistência em 360°." }
+      }
+    }
+  },
+
+  "x-imagegem": {
+    "descricao": "Regras que JSON Schema não expressa declarativamente. Moram aqui para que E3 e E5 leiam do schema em vez de reimplementar. O validador de referência em schemas/validador.py interpreta o campo 'check'.",
+
+    "termos_proibidos": [
+      "photorealistic", "hyper-realistic", "hyperrealistic", "8k", "ultra detailed", "award winning", "masterpiece"
+    ],
+
+    "orcamento_densidade": {
+      "escopo": "corpo do prompt renderizado, excluindo a cauda AVOID",
+      "nota": "Faixas por regime, não banda única. Os três regimes carregam conjuntos diferentes de blocos obrigatórios, então uma faixa só reprovaria dois dos três exemplos âncora do prompt-mestre. Derivadas dos âncoras medidos (597, 410 e 290 palavras) com folga de cerca de 12%. Decisão do autor no gate de E2, em 2026-08-16.",
+      "faixas": [
+        {
+          "regime": "generation",
+          "has_person": true,
+          "min_palavras": 500,
+          "max_palavras": 650,
+          "ancora": "exemplo 1 do prompt-mestre, 597 palavras",
+          "razao": "carrega SUBJECT, WARDROBE e SKIN, que os demais regimes não têm simultaneamente"
+        },
+        {
+          "regime": "generation",
+          "has_person": false,
+          "min_palavras": 350,
+          "max_palavras": 560,
+          "ancora": "exemplo 4 do prompt-mestre, 410 palavras",
+          "razao": "MATERIALS substitui SUBJECT, WARDROBE e SKIN, com custo menor de palavras",
+          "derivacao_do_teto": "O âncora tem 410 palavras mas não satisfaz o item 1 do checklist: declara as fontes em taquigrafia, sem as seis grandezas por fonte, e omite o bloco FRAME que o schema torna obrigatório. Custo medido da conformidade sobre o próprio âncora: +63 palavras em LIGHTING e +24 em FRAME, chegando a ~497. Teto de 560 é esse valor com cerca de 12% de folga. Manter 500 exigiria afrouxar o item 1, o que não se faz."
+        },
+        {
+          "regime": "edit",
+          "min_palavras": 250,
+          "max_palavras": 400,
+          "ancora": "exemplo 3 do prompt-mestre, 290 palavras",
+          "razao": "câmera, luz e revelação já estão gravadas no quadro de origem e não são respecificadas"
+        }
+      ],
+      "ordem_de_sacrificio": ["optics", "wardrobe", "environment.description"],
+      "nunca_cortar": ["lighting", "skin", "materials", "imperfection_budget"]
+    },
+
+    "limites_referencia": {
+      "fonte": "GAI",
+      "modelo": "gemini-3-pro-image",
+      "identidade": 5,
+      "objetos_alta_fidelidade": 6,
+      "estilo": 3,
+      "total": 14
+    },
+
+    "regras_de_coerencia": [
+      { "id": "C1", "eixo": 7, "check": "iso_vs_grain", "descricao": "O grão declarado corresponde à faixa de ISO.", "aplica_quando": "sempre" },
+      { "id": "C2", "eixo": 1, "check": "aperture_vs_focal_plane", "descricao": "Abertura larga exige plano focal com elementos fora de foco declarados.", "aplica_quando": "sempre" },
+      { "id": "C3", "eixo": 1, "check": "shutter_vs_motion", "descricao": "Velocidade lenta exige arrasto de movimento declarado; velocidade alta não admite arrasto.", "aplica_quando": "sempre" },
+      { "id": "C4", "eixo": 2, "check": "source_size_vs_penumbra", "descricao": "A largura da penumbra corresponde ao tamanho angular da fonte principal.", "aplica_quando": "scene.setting == studio" },
+      { "id": "C5", "eixo": 2, "check": "catchlight_vs_modifier", "descricao": "A forma do catchlight corresponde ao modificador da key.", "aplica_quando": "scene.has_person" },
+      { "id": "C6", "eixo": 2, "check": "single_shadow_direction", "descricao": "Existe uma e só uma direção de sombra projetada declarada.", "aplica_quando": "sempre" },
+      { "id": "C7", "eixo": 1, "check": "flare_requires_source", "descricao": "Veiling flare exige fonte de luz no quadro ou em ângulo de incidência.", "aplica_quando": "optics.veiling_flare presente" },
+      { "id": "C9", "eixo": 5, "check": "fabric_vs_drape", "descricao": "Tecido nomeado exige caimento correspondente declarado.", "aplica_quando": "wardrobe não vazio" },
+      { "id": "C10", "eixo": 6, "check": "exterior_requires_solar", "descricao": "Cena exterior exige elevação e azimute solares e condição de céu.", "aplica_quando": "scene.setting == exterior" },
+      { "id": "C11", "eixo": 3, "check": "identity_reference_ceiling", "descricao": "Referências de identidade não excedem 5.", "aplica_quando": "character presente" },
+      { "id": "C12", "eixo": 6, "check": "reflection_declares_source", "descricao": "Superfície polida com reflexo declarado não implica fonte de luz ausente de lighting.sources.", "aplica_quando": "materials contém finish polished" },
+      { "id": "C13", "eixo": 3, "check": "person_requires_skin_and_subject", "descricao": "has_person exige os blocos subject e skin.", "aplica_quando": "scene.has_person" },
+      { "id": "C14", "eixo": 0, "check": "edit_requires_edit_block", "descricao": "regime edit exige o bloco edit com preservação anterior à alteração.", "aplica_quando": "scene.regime == edit" }
+    ],
+
+    "checklist_de_emissao": [
+      { "item": 1, "check": "ck1_light_sources_complete", "descricao": "Toda fonte declara tamanho, distância, azimute, elevação e temperatura de cor." },
+      { "item": 2, "check": "ck2_exposure_coherent", "descricao": "Trio de exposição coerente com as consequências declaradas. Delega a C1, C2 e C3." },
+      { "item": 3, "check": "ck3_single_shadow_direction", "descricao": "Direção de sombra projetada única e declarada. Delega a C6." },
+      { "item": "4a", "check": "ck4a_skin", "descricao": "Havendo pessoa: poro, especular de zona T, assimetria específica e marca preservada.", "aplica_quando": "scene.has_person" },
+      { "item": "4b", "check": "ck4b_materials", "descricao": "Havendo superfície nomeada: resposta especular declarada.", "aplica_quando": "materials não vazio" },
+      { "item": 5, "check": "ck5_imperfection_budget", "descricao": "De 1 a 3 imperfeições específicas e localizadas." },
+      { "item": 6, "check": "ck6_forbidden_terms", "descricao": "Zero ocorrências dos termos proibidos, em qualquer campo de texto e no prompt renderizado." },
+      { "item": 7, "check": "ck7_avoid_tail", "descricao": "Cauda existe, é curta e contém apenas modos de falha de renderização." },
+      { "item": 8, "check": "ck8_density_budget", "descricao": "Comprimento do corpo dentro do orçamento da modalidade." }
+    ],
+
+    "ordem_dos_blocos": {
+      "generation": ["headline", "SUBJECT", "WARDROBE", "OBJECT AND MATERIALS", "CAMERA AND OPTICS", "LIGHTING", "REFLECTION GEOMETRY", "SKIN", "COLOUR AND RENDER", "FRAME", "CAPTURE REALITY", "AVOID"],
+      "edit": ["headline", "PRESERVE", "REPLACE", "RECONCILE LIGHT", "GROUND AND INTEGRATE", "AVOID"]
+    }
+  },
+
+  "allOf": [
+    {
+      "if": { "properties": { "scene": { "properties": { "has_person": { "const": true } } } }, "required": ["scene"] },
+      "then": { "required": ["subject", "skin"] }
+    },
+    {
+      "if": { "properties": { "scene": { "properties": { "regime": { "const": "edit" } } } }, "required": ["scene"] },
+      "then": { "required": ["edit"] }
+    },
+    {
+      "if": { "properties": { "scene": { "properties": { "setting": { "const": "exterior" } } } }, "required": ["scene"] },
+      "then": {
+        "properties": {
+          "environment": { "required": ["solar_elevation_deg", "solar_azimuth_deg", "sky_condition"] }
+        },
+        "required": ["environment"]
+      }
+    }
+  ]
+}
