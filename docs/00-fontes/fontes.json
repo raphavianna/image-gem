@@ -7,7 +7,26 @@
     "documentacao primeiro-parte para capacidades, limites e precos",
     "cookbook e notebooks para padroes de uso"
   ],
+  "revisao": {
+    "data": "2026-08-16",
+    "etapa": "E1",
+    "motivo": "egress de ai.google.dev liberado; fonte primaria lida e extraida em 06-fonte-primaria-ai-google-dev.md",
+    "efeitos": ["L1 resolvida", "L2 resolvida em substancia", "L4 resolvida", "L6 resolvida", "D1 resolvida", "D2 resolvida com correcao de decisao travada: identidade preservada usa teto de 5, nao 6"]
+  },
   "fontes": [
+    {
+      "tag": "GAI",
+      "nome": "Documentacao primeiro-parte Gemini API",
+      "urls": [
+        "https://ai.google.dev/gemini-api/docs/image-generation",
+        "https://ai.google.dev/gemini-api/docs/pricing"
+      ],
+      "obtido_via": "curl direto apos liberacao de egress",
+      "lido_em": "2026-08-16",
+      "confianca": "alta",
+      "autoridade_para": ["capacidades", "limites", "precos", "orcamentos de referencia por papel", "guia de prompts oficial", "limitacoes declaradas", "identificadores e nomes de modelo"],
+      "nota": "documentacao primeiro-parte; supera CB e BLOG em capacidades, limites e precos"
+    },
     {
       "tag": "SDK",
       "nome": "googleapis/python-genai",
@@ -70,25 +89,34 @@
   ],
   "egress": {
     "verificado_em": "2026-08-16",
-    "bloqueados": [
+    "politica": "Custom",
+    "liberados": [
       "ai.google.dev",
       "docs.cloud.google.com",
-      "developers.googleblog.com",
-      "blog.google",
-      "aistudio.google.com",
-      "higgsfield.ai",
-      "api.higgsfield.ai",
-      "platform.higgsfield.ai"
-    ],
-    "liberados": [
       "cloud.google.com",
       "cloud.google.com/blog",
       "raw.githubusercontent.com",
       "api.github.com",
       "pypi.org",
-      "generativelanguage.googleapis.com"
+      "generativelanguage.googleapis.com",
+      "clerk.higgsfield.ai",
+      "oriented-jay-78.clerk.accounts.dev",
+      "fnf-api-gw.higgsfield.ai",
+      "fnf.higgsfield.ai",
+      "cdn.higgsfield.ai",
+      "static.higgsfield.ai"
     ],
-    "armadilha": "cloud.google.com/vertex-ai/* responde 301 para docs.cloud.google.com, que e bloqueado"
+    "bloqueados_na_E0_agora_liberados": [
+      "ai.google.dev",
+      "docs.cloud.google.com",
+      "higgsfield.ai"
+    ],
+    "nao_reverificados": [
+      "developers.googleblog.com",
+      "blog.google",
+      "aistudio.google.com"
+    ],
+    "armadilha": "cloud.google.com/vertex-ai/* responde 301 para docs.cloud.google.com; ambos liberados desde 2026-08-16"
   },
   "modelos": {
     "alvo": "gemini-3-pro-image",
@@ -96,20 +124,36 @@
       "gemini-3-pro-image": "Nano Banana Pro",
       "gemini-3.1-flash-image": "Nano Banana 2",
       "gemini-2.5-flash-image": "Nano Banana",
-      "gemini-3.1-flash-lite-image": null
+      "gemini-3.1-flash-lite-image": "Nano Banana 2 Lite"
+    },
+    "preco_gemini_3_pro_image_usd": {
+      "fonte": "GAI",
+      "imagem_saida_1k_ou_2k": 0.134,
+      "imagem_saida_4k": 0.24,
+      "imagem_entrada": 0.0011,
+      "batch_e_flex_1k_2k": 0.067,
+      "batch_e_flex_4k": 0.12,
+      "nota": "1K e 2K consomem 1120 tokens e custam o mesmo; default do sistema e 2K"
+    },
+    "referencias_gemini_3_pro_image": {
+      "fonte": "GAI",
+      "personagens_identidade": 5,
+      "objetos_alta_fidelidade": 6,
+      "estilo": 3,
+      "total": 14
     }
   },
   "lacunas": [
-    {"id": "L1", "item": "preco por imagem", "severidade": "critica", "motivo": "todas as paginas de preco bloqueadas no egress", "resolve_com": "liberacao de egress, tabela colada pelo usuario, ou usage_metadata de chamada real"},
-    {"id": "L2", "item": "marca dagua nao configuravel", "severidade": "baixa", "motivo": "inferencia a partir de SDK e BLOG, sem citacao direta", "resolve_com": "doc bloqueada ou metadados de imagem gerada"},
-    {"id": "L3", "item": "default e comportamento de person_generation", "severidade": "media", "motivo": "nao documentado nas fontes acessiveis", "resolve_com": "doc bloqueada ou teste empirico"},
-    {"id": "L4", "item": "guia de prompts de ai.google.dev nao lido diretamente", "severidade": "baixa", "motivo": "host bloqueado", "resolve_com": "liberacao de egress"},
-    {"id": "L5", "item": "documentacao da API Higgsfield", "severidade": "alta", "motivo": "todos os hosts bloqueados", "resolve_com": "usuario fornecer docs no repositorio"},
-    {"id": "L6", "item": "gemini-3.1-flash-lite-image sem descricao", "severidade": "nenhuma", "motivo": "aparece so na lista de selecao do cookbook", "resolve_com": "doc bloqueada"}
+    {"id": "L1", "item": "preco por imagem", "estado": "RESOLVIDA", "resolvida_em": "2026-08-16", "fonte": "GAI", "valor": "0.134 USD por imagem 1K/2K; 0.24 em 4K"},
+    {"id": "L2", "item": "marca dagua nao configuravel", "estado": "RESOLVIDA_EM_SUBSTANCIA", "fonte": "GAI", "citacao": "All generated images include a SynthID watermark", "residuo": "nenhuma fonte afirma nem nega a impossibilidade formal de desativacao; impacto pratico nulo"},
+    {"id": "L3", "item": "default e comportamento de person_generation", "estado": "ABERTA", "severidade": "media", "motivo": "nao documentado em GAI nem nas demais fontes", "resolve_com": "teste empirico com GEMINI_API_KEY"},
+    {"id": "L4", "item": "guia de prompts de ai.google.dev nao lido diretamente", "estado": "RESOLVIDA", "resolvida_em": "2026-08-16", "fonte": "GAI", "nota": "template fotorrealista oficial lido literalmente e mantido rejeitado pela doutrina"},
+    {"id": "L5", "item": "documentacao da API Higgsfield", "estado": "ABERTA", "severidade": "alta", "motivo": "rede destravada em 2026-08-16, mas extracao pertence a E5; credencial refresh_token segue pendente", "resolve_com": "extracao na E5 mais credencial do usuario"},
+    {"id": "L6", "item": "gemini-3.1-flash-lite-image sem descricao", "estado": "RESOLVIDA", "fonte": "GAI", "valor": "Nano Banana 2 Lite; nao otimizado para multi-referencia nem edicao sequencial; fora do caminho principal"}
   ],
   "divergencias": [
-    {"id": "D1", "item": "aspect ratios 4:5 e 5:4", "resolucao": "suportados; docstring do SDK desatualizada; campo e Optional[str] sem enum", "pendente": "confirmacao empirica de dimensao 928x1152 em 1K"},
-    {"id": "D2", "item": "limite de imagens de referencia", "resolucao": "6 em alta fidelidade e o teto operacional para identidade preservada; 14 e o teto absoluto", "pendente": "comparacao empirica 6 vs 8"},
-    {"id": "D3", "item": "thinking_level no NB Pro", "resolucao": "NB Pro pensa, mas thinking_level foi introduzido pelo NB 2; nao depender dele no caminho Pro", "pendente": "teste"}
+    {"id": "D1", "item": "aspect ratios 4:5 e 5:4", "estado": "RESOLVIDA", "resolucao": "suportados; GAI lista 4:5 em 928x1152 (1K), identico ao CB; docstring do SDK desatualizada"},
+    {"id": "D2", "item": "limite de imagens de referencia", "estado": "RESOLVIDA", "resolucao": "GAI decompoe os 14 em orcamentos por papel: 6 objetos alta fidelidade + 5 personagens + 3 estilo. Teto para identidade preservada e 5, nao 6", "impacto": "corrige decisao travada do ESTADO", "pendente": "comparacao empirica 5 vs 8 como validacao de qualidade"},
+    {"id": "D3", "item": "thinking_level no NB Pro", "estado": "ABERTA", "resolucao": "NB Pro pensa, mas thinking_level foi introduzido pelo NB 2; nao depender dele no caminho Pro", "pendente": "teste"}
   ]
 }

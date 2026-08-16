@@ -14,9 +14,9 @@ Atualizado em: **2026-08-16**
 
 | Etapa | Estado |
 |---|---|
-| **E0 — Fontes** | **Concluída e aprovada.** `docs/00-fontes/`, commit `e95ac90` |
-| **E1 — Doutrina de hiper-realismo** | **Próxima.** Aguardando início |
-| E2 — Gramática do prompt | Não iniciada |
+| **E0 — Fontes** | **Concluída e aprovada.** `docs/00-fontes/`, commit `e95ac90`. **Revisada em 2026-08-16** com a fonte primária liberada — ver `00-fontes/06-fonte-primaria-ai-google-dev.md` |
+| **E1 — Doutrina de hiper-realismo** | **Concluída, aguardando aprovação no gate.** `docs/01-doutrina-hiper-realismo.md` |
+| E2 — Gramática do prompt | **Próxima.** Aguardando aprovação de E1 |
 | E3 — Modalidades | Não iniciada |
 | E4 — Biblioteca de templates | Não iniciada |
 | E5 — Implementação | Não iniciada |
@@ -28,18 +28,21 @@ Atualizado em: **2026-08-16**
 - Modelo alvo: **`gemini-3-pro-image`** (Nano Banana Pro). Alternativa de custo documentada: `gemini-3.1-flash-image`.
 - Prompts gerados em **inglês**; documentação em **português do Brasil**.
 - Entrega inclui Skill, documentação, CLI, servidor MCP e cliente Higgsfield completo.
-- Gramática de blocos rotulados em maiúsculas + cauda `AVOID` curta. Justificada em `docs/00-fontes/04-guia-de-prompts-oficial.md`.
-- Teto de **6 imagens de referência** para qualquer template que dependa de identidade preservada — não 14. Razão em `docs/00-fontes/03-capacidades.md`.
+- Gramática de blocos rotulados em maiúsculas + cauda `AVOID` curta. Justificada em `docs/00-fontes/04-guia-de-prompts-oficial.md`. Critério de admissão à cauda formalizado em `docs/01-doutrina-hiper-realismo.md`, seção 6.
+- ~~Teto de **6 imagens de referência** para qualquer template que dependa de identidade preservada~~ → **corrigido em 2026-08-16 para 5.** A documentação primeiro-parte decompõe os 14 em orçamentos por papel: **5 personagens** para identidade, 6 objetos em alta fidelidade, 3 referências de estilo. O 6 era o orçamento de objetos. Razão em `docs/00-fontes/05-divergencias-e-lacunas.md`, D2. **Pendente de confirmação do autor no gate de E1.**
+- Resolução padrão de saída: **2K**. 1K e 2K consomem os mesmos 1120 tokens e custam o mesmo (`$0,134`); 4K custa `$0,24`. Fonte em `docs/00-fontes/06-fonte-primaria-ai-google-dev.md`.
 
 ## Pendências externas
 
 | Item | Estado | Bloqueia |
 |---|---|---|
-| `GEMINI_API_KEY` no environment | Pendente | Execução real da modalidade 4 |
-| Egress da Higgsfield liberado | Em andamento — política do environment alterada para `Custom` | Modalidades 2 e 3 |
-| Credenciais Higgsfield (`refresh_token`) | Pendente, depende do egress | Modalidade 3 |
+| `GEMINI_API_KEY` no environment | **Pendente** | Execução real da modalidade 4; resolução da lacuna L3 (`person_generation`) |
+| Egress da Higgsfield | **Resolvido em 2026-08-16** — todos os hosts respondem | — |
+| Egress de `ai.google.dev` | **Resolvido em 2026-08-16** — fonte primária lida, L1/L2/L4/L6 fechadas | — |
+| Credenciais Higgsfield (`refresh_token`) | **Pendente** — não depende mais do egress | Modalidade 3 |
+| Documentação da API Higgsfield extraída | Pendente — rede liberada, extração pertence à E5 | Cliente Higgsfield completo |
 
-Nenhuma delas bloqueia E1 a E4, que são documentação e templates.
+Nenhuma delas bloqueia E2 a E4, que são schema, documentação e templates.
 
 ## Ambiente
 
@@ -68,7 +71,20 @@ done
 
 Qualquer código HTTP significa liberado. `000` significa que o túnel CONNECT foi recusado — ainda bloqueado.
 
-Se a liberação de `ai.google.dev` funcionar, vale **revisitar a E0**: a lacuna L1 (preço por imagem), hoje a única crítica, passa a ser resolvível. Ver `docs/00-fontes/05-divergencias-e-lacunas.md`.
+**Último resultado, 2026-08-16 (abertura da sessão de E1): todos liberados.**
+
+| Host | Código |
+|---|---|
+| `clerk.higgsfield.ai` | 200 |
+| `oriented-jay-78.clerk.accounts.dev` | 200 |
+| `fnf-api-gw.higgsfield.ai` | 404 |
+| `fnf.higgsfield.ai` | 404 |
+| `cdn.higgsfield.ai` | 404 |
+| `static.higgsfield.ai` | 404 |
+| `ai.google.dev` | 200 |
+| `docs.cloud.google.com` | 200 |
+
+A E0 **foi revisitada** em consequência disso, conforme previsto: a lacuna crítica L1 (preço) está fechada, junto com L2, L4 e L6, e as divergências D1 e D2. A revisão corrigiu uma decisão travada — o teto de referências de identidade. Ver `docs/00-fontes/06-fonte-primaria-ai-google-dev.md` e `05-divergencias-e-lacunas.md`.
 
 ## Instalação da CLI da Higgsfield
 
