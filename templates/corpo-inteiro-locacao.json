@@ -1,0 +1,142 @@
+{
+  "template_id": "corpo-inteiro-locacao",
+  "template_version": "1.0",
+  "description": "Corpo inteiro em locação. Usa a locação como cenário fotografável, não como fundo trocável. Composição vertical 4:5 ou 3:4, câmera na altura do peito. Uso: editorial de moda em rua, ensaio de campanha em locação.",
+  "regime": "generation",
+  "has_person": true,
+  "aliases": ["full body location", "corpo inteiro", "editorial locação"],
+
+  "ask_before": [
+    { "field": "subject.description", "prompt": "Descreva a pessoa: idade aproximada, pele, cabelo, altura aparente, formato de corpo. Sem nome." },
+    { "field": "subject.asymmetries", "prompt": "Duas assimetrias, uma facial e uma postural (peso mais em uma perna, ombro mais alto)." },
+    { "field": "subject.preserved_marks", "prompt": "Marcas preservadas com posição." },
+    { "field": "subject.expression", "prompt": "Expressão específica e postura corporal." },
+    { "field": "wardrobe.0.garment", "prompt": "Look completo — em corpo inteiro o vestuário toma metade do quadro. Nomeie tecidos por peça." },
+    { "field": "environment.description", "prompt": "Locação: rua, praça, corredor arquitetônico. Determina o preenchimento e a perspectiva." },
+    { "field": "output.aspect_ratio", "prompt": "Proporção. Recomendado 4:5 para editorial, 9:16 para social vertical." }
+  ],
+
+  "defaults": {
+    "spec_version": "1.0",
+    "meta": {
+      "modality": 1,
+      "target_model": "gemini-3-pro-image",
+      "user_request": ""
+    },
+    "output": { "resolution": "2K", "orientation": "vertical" },
+    "scene": {
+      "regime": "generation",
+      "headline": "Editorial full-body portrait on location, single subject standing",
+      "has_person": true,
+      "setting": "exterior"
+    },
+    "subject": {
+      "vellus_hair": "vellus at the jaw catches the edge of the sky fill"
+    },
+    "wardrobe": [
+      {
+        "fabric": "wool",
+        "weave": "flannel wool with a visible twill weave",
+        "tension_creases": [
+          "vertical creases falling from the shoulder to the elbow",
+          "compression creases at the inner elbow and at the hip where the fabric folds",
+          "a slight roll where the collar meets the neck"
+        ],
+        "drape": "the wool falls with structured weight, holding broad folds rather than fluid ones"
+      }
+    ],
+    "camera": {
+      "body": "Sony A7R V",
+      "sensor_format": "full_frame_35mm",
+      "focal_length_mm": 85,
+      "aperture_f": 2.8,
+      "shutter": "1/500s",
+      "iso": 200,
+      "distance_m": 4.5,
+      "height": "at chest height",
+      "focal_plane": {
+        "in_focus": ["the near eye and the near hand"],
+        "out_of_focus": [
+          "the far leg and the far shoulder soften progressively",
+          "the environment 10 metres out and beyond separates by depth"
+        ]
+      },
+      "perspective_note": "85mm on full frame at 4.5 metres holds body proportions naturally without foreshortening the near foot"
+    },
+    "optics": {
+      "bokeh_character": "soft rounded bokeh centred, with mild cat-eye deformation at the edges",
+      "chromatic_aberration": "faint magenta-green longitudinal fringe on the specular highlights at the hair edge",
+      "vignetting": "half a stop of mechanical vignetting in the corners"
+    },
+    "lighting": {
+      "sources": [
+        { "role": "sun", "modifier": "direct sunlight", "size_m": null, "distance_m": null, "azimuth_deg": 220, "elevation": "35 degrees above the horizon, high-side of the subject", "colour_temp_k": 5200 },
+        { "role": "sky", "modifier": "open sky dome fill", "size_m": null, "distance_m": null, "azimuth_deg": 0, "elevation": "hemispherical overhead", "colour_temp_k": 8500, "stops_relative_to_key": -2 }
+      ],
+      "key_fill_ratio": "4:1",
+      "shadow_direction": "falls toward camera-left and slightly forward, penumbra narrow near the feet and widening across the ground",
+      "contact_shadow": "the shadow of both feet meets the ground densely, opening into a soft penumbra away from the sole",
+      "catchlight": {
+        "shape": "a small round concentrated specular from the sun in each iris",
+        "position": "upper temporal side of the near eye",
+        "far_eye": "smaller and dimmer in the far eye, with a broad diffuse sky fill as a secondary highlight in the lower half"
+      },
+      "mixed_temperature": "the 5200K sun and the 8500K sky dome diverge; the shadow side of the face reads slightly cool while the lit side stays neutral"
+    },
+    "skin": {
+      "pore_scale": "at this framing the pore reads as fine textural grain rather than individual pores on the face; hands read at pore scale",
+      "specular_zones": "the T-zone is measurably brighter than the cheeks; the hand ridges catch specular from the sun",
+      "subsurface": "subsurface scattering reddens the ear rims and the fingertips where the sun grazes",
+      "regional_variation": "the neck reads finer than the forehead; the back of the hand reads coarser than the palm"
+    },
+    "render": {
+      "colour_profile": "Kodak Portra 400",
+      "palette_note": "warm midtones from the sun with cool separation into the shadows",
+      "highlight_rolloff": "gradual rolloff on the wardrobe brights without clipping",
+      "black_point": "deepest shadow near 7 percent luminance rather than pure black",
+      "grain": "fine luminance grain consistent with ISO 200"
+    },
+    "frame": {
+      "composition": "subject slightly camera-left of centre with the environment opening on the camera-right; feet inside the frame with two percent margin below the sole",
+      "headroom": "moderate headroom, roughly 6 percent of frame height above the crown"
+    },
+    "environment": {
+      "solar_elevation_deg": 35,
+      "solar_azimuth_deg": 220,
+      "sky_condition": "clear",
+      "sky_fill": "open sky dome at 8500K, two stops under the sun, giving the shadow side a cool bias",
+      "atmospheric_perspective": "the environment 10 metres out and beyond drops in contrast and saturation, separating without depending on aperture alone",
+      "contact_points": ["under each foot against the ground"]
+    },
+    "imperfection_budget": [
+      { "category": "styling", "specific": "a hem is caught by the wind and lifts a few centimetres from vertical" },
+      { "category": "capture", "specific": "the subject's weight shifted onto the back foot and the shoulder line sits marginally off horizontal" }
+    ],
+    "capture_reality": "A single frame from a working editorial shoot in daylight",
+    "avoid": [
+      "illustration", "3D render", "CGI", "digital painting",
+      "airbrushed or waxy skin", "uniform poreless texture", "perfect facial symmetry",
+      "glowing teeth", "teal-orange over-grade", "HDR halos",
+      "flare without a sun in the angle of incidence",
+      "watermark", "text overlay", "malformed hands"
+    ]
+  },
+
+  "example_answers": {
+    "meta.user_request": "editorial de campanha em corpo inteiro numa rua de centro urbano ao meio-dia",
+    "subject.description": "A 27-year-old woman with warm mid-brown skin, dark eyes and long straight black hair pulled loosely back, about 1.72 metres tall with a lean build",
+    "subject.asymmetries": [
+      "the right eyebrow sits marginally higher than the left",
+      "the weight rests on the right foot with the left hip dropped and the left shoulder marginally lower"
+    ],
+    "subject.preserved_marks": [
+      "a 3mm mole above the left corner of the mouth",
+      "a faint diagonal scar of 8mm along the top of the right forearm",
+      "capillary flush on the knuckles from the walk"
+    ],
+    "subject.expression": "the mouth is closed and neutral, the chin down a few degrees, the eyes engaged with the camera",
+    "wardrobe.0.garment": "a caramel wool double-breasted overcoat left open over a plain black cotton T-shirt and straight indigo denim, worn brown leather ankle boots",
+    "environment.description": "a low-traffic side street with pale limestone façades on both sides, storefronts blurred out at 15 metres, no pedestrians in the near frame",
+    "output.aspect_ratio": "4:5"
+  }
+}

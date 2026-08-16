@@ -1,0 +1,142 @@
+{
+  "template_id": "retrato-ceu-aberto",
+  "template_version": "1.0",
+  "description": "Retrato editorial em céu aberto no fim da tarde. Contraluz de recorte + preenchimento pela cúpula do céu — a divergência de temperatura entre sol quente e céu frio assina exterior real. Uso: capa editorial em locação, retrato de reportagem.",
+  "regime": "generation",
+  "has_person": true,
+  "aliases": ["golden hour portrait", "editorial outdoor", "retrato locação"],
+
+  "ask_before": [
+    { "field": "subject.description", "prompt": "Descreva a pessoa: idade aproximada, pele, cabelo, formato de rosto. Sem nome — pessoa real identificável é vetada." },
+    { "field": "subject.asymmetries", "prompt": "Duas assimetrias específicas em eixos independentes." },
+    { "field": "subject.preserved_marks", "prompt": "Marcas preservadas com posição — inclua marcas de idade quando fizer sentido (dano solar, rugas de expressão)." },
+    { "field": "subject.expression", "prompt": "Expressão específica. Em contraluz forte, considere 'apertou levemente os olhos contra a luz'." },
+    { "field": "wardrobe.0.garment", "prompt": "Peça principal, com tecido nomeado. Fibra natural (lã, algodão penteado, tweed) responde melhor ao contraluz." },
+    { "field": "environment.description", "prompt": "Locação: campo aberto, rua urbana, orla, terraço. Determina o preenchimento e a perspectiva atmosférica." }
+  ],
+
+  "defaults": {
+    "spec_version": "1.0",
+    "meta": {
+      "modality": 1,
+      "target_model": "gemini-3-pro-image",
+      "user_request": ""
+    },
+    "output": { "aspect_ratio": "4:5", "resolution": "2K", "orientation": "vertical" },
+    "scene": {
+      "regime": "generation",
+      "headline": "Editorial outdoor portrait in late-afternoon light, waist-up",
+      "has_person": true,
+      "setting": "exterior"
+    },
+    "subject": {
+      "vellus_hair": "the vellus and stray hair at the crown catch the rim light as a fine halo"
+    },
+    "wardrobe": [
+      {
+        "fabric": "wool",
+        "weave": "brushed wool with visible surface fibre",
+        "tension_creases": [
+          "compression creases where the collar meets the neck",
+          "a slight roll where the shoulder seam rises"
+        ],
+        "drape": "the wool falls with structured weight, holding a broad fold rather than a fluid one"
+      }
+    ],
+    "camera": {
+      "body": "Leica SL2",
+      "sensor_format": "full_frame_35mm",
+      "focal_length_mm": 50,
+      "aperture_f": 2,
+      "shutter": "1/2000s",
+      "iso": 100,
+      "distance_m": 1.6,
+      "height": "at subject eye height",
+      "focal_plane": {
+        "in_focus": ["the near eye"],
+        "out_of_focus": [
+          "the far eye falls just outside critical focus",
+          "the background 40 metres out is separated by atmospheric perspective"
+        ]
+      },
+      "perspective_note": "50mm on full frame renders the head at natural perspective without wide-angle exaggeration"
+    },
+    "optics": {
+      "bokeh_character": "smooth centre with cat-eye deformation on the frame edges from wide-open aperture",
+      "chromatic_aberration": "faint magenta-green longitudinal fringe on the specular highlights at the hair edge",
+      "vignetting": "half a stop of mechanical vignetting in the corners",
+      "veiling_flare": "low-contrast veiling flare across the right third of the frame from the sun in the angle of incidence, and a single weak hexagonal ghost"
+    },
+    "lighting": {
+      "sources": [
+        { "role": "sun", "modifier": "direct sunlight", "size_m": null, "distance_m": null, "azimuth_deg": 250, "elevation": "8 degrees above the horizon, behind and camera-right of the subject", "colour_temp_k": 3200 },
+        { "role": "sky", "modifier": "open sky dome fill", "size_m": null, "distance_m": null, "azimuth_deg": 90, "elevation": "hemispherical overhead", "colour_temp_k": 12000, "stops_relative_to_key": -2.5 }
+      ],
+      "key_fill_ratio": "6:1",
+      "shadow_direction": "falls long and toward camera-left, penumbra narrow near the feet and widening with distance",
+      "contact_shadow": "the shadow of the wardrobe meets the ground densely under the feet and opens into a soft penumbra with distance",
+      "catchlight": {
+        "shape": "a small round concentrated specular from the sun, offset to the upper temporal side of each iris",
+        "position": "upper-right in the near eye, mirrored in the far eye",
+        "far_eye": "smaller and dimmer in the far eye, with a broad diffuse fill from the sky dome as a secondary highlight in the lower half of the iris"
+      },
+      "mixed_temperature": "The 3200K rim from the sun and the 12000K fill from the sky diverge sharply; the face-side shadow reads blue while the rim stays warm. That temperature divergence is what signs the frame as outdoor."
+    },
+    "skin": {
+      "pore_scale": "true pore scale for this framing, with the vellus catching the rim",
+      "specular_zones": "sebum sheen concentrated on the nose bridge and forehead centre; the T-zone is measurably brighter than the cheeks",
+      "subsurface": "subsurface scattering reddens the ear rims and the outer nostrils where the sun grazes",
+      "regional_variation": "fine dryness on the cheekbones and lower lip, with two visible vertical creases in the lower lip"
+    },
+    "render": {
+      "colour_profile": "Kodak Portra 400",
+      "palette_note": "warm midtones from the low sun, cool shadows from the sky, greens pulled slightly cool",
+      "highlight_rolloff": "gradual rolloff on the rim without clipping the specular on the crown",
+      "black_point": "the deepest shadow near 8 percent luminance rather than pure black",
+      "grain": "fine luminance grain consistent with ISO 100"
+    },
+    "frame": {
+      "composition": "subject placed slightly camera-left of centre with the gaze opening into the larger negative space",
+      "headroom": "moderate headroom, roughly 10 percent of frame height"
+    },
+    "environment": {
+      "horizon": "level with the subject's chin line",
+      "solar_elevation_deg": 8,
+      "solar_azimuth_deg": 250,
+      "sky_condition": "clear",
+      "sky_fill": "open sky dome at 12000K, two and a half stops under the sun, opening the shadow side of the face to a cool blue",
+      "atmospheric_perspective": "the background 40 metres out drops in contrast and saturation, separating from the subject without depending on aperture alone",
+      "contact_points": ["under the feet against the ground"]
+    },
+    "imperfection_budget": [
+      { "category": "styling", "specific": "the wind has lifted the collar on one side and left it there" },
+      { "category": "capture", "specific": "the subject squinted slightly against the sun, and the near eye reads narrower than a controlled studio blink" }
+    ],
+    "capture_reality": "A single frame from a working editorial session at the end of the afternoon",
+    "avoid": [
+      "illustration", "3D render", "CGI", "digital painting",
+      "airbrushed or waxy skin", "uniform poreless texture", "perfect facial symmetry",
+      "glowing teeth", "teal-orange over-grade", "HDR halos",
+      "flare without a sun in the angle of incidence",
+      "watermark", "text overlay", "malformed hands"
+    ]
+  },
+
+  "example_answers": {
+    "meta.user_request": "retrato editorial de um homem mais velho ao ar livre no fim da tarde",
+    "subject.description": "A 68-year-old man with weathered fair skin, grey-green eyes, close-cropped silver hair and a strong jaw softened by age",
+    "subject.asymmetries": [
+      "the right expression line at the outer eye reads deeper than the left",
+      "the left corner of the mouth carries a longer downward crease"
+    ],
+    "subject.preserved_marks": [
+      "diffuse sun damage across the temples",
+      "a 3mm faded scar on the chin",
+      "two age spots at the left temple",
+      "capillary flush on the nose bridge"
+    ],
+    "subject.expression": "he has squinted slightly against the low sun, the mouth closed and the jaw set",
+    "wardrobe.0.garment": "a dark navy brushed-wool overshirt over a plain oatmeal T-shirt",
+    "environment.description": "a low urban rooftop with a distant industrial skyline 40 metres out and no direct architecture behind the subject"
+  }
+}

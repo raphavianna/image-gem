@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.pytest_cache/
+.DS_Store
+
+# metadados de pip install -e — não versionar
+*.egg-info/
+build/
+dist/
+
+# registros locais de execução — versionar só quando promovidos por E6
+runs/*
+# exceção: registros-âncora usados como documentação viva do loop
+!runs/EXEMPLO-*/

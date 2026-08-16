@@ -1,0 +1,98 @@
+{
+  "template_id": "edicao-troca-fundo",
+  "template_version": "1.0",
+  "description": "Variante de edição: troca de fundo preservando o sujeito. Gramática invertida — PRESERVE antes de REPLACE. Uso: mover retrato de estúdio para locação plausível sem re-renderizar a pessoa.",
+  "regime": "edit",
+  "has_person": true,
+  "aliases": ["background swap", "background replace", "troca de fundo"],
+
+  "ask_before": [
+    { "field": "edit.source_urls", "prompt": "URL(s) da imagem de origem. Só uma para troca de fundo simples." },
+    { "field": "edit.replace", "prompt": "Descrição do novo ambiente com geometria — distância, mobiliário, o que aparece ao fundo." },
+    { "field": "edit.light_reconciliation", "prompt": "Como o novo ambiente justifica exatamente a luz já gravada no sujeito (fonte plausível, direção, dureza)." },
+    { "field": "edit.integration", "prompt": "Como sujeito e ambiente se integram: sombra de contato, reflexos, atmosfera, casamento de paleta." }
+  ],
+
+  "defaults": {
+    "spec_version": "1.0",
+    "meta": {
+      "modality": 1,
+      "target_model": "gemini-3-pro-image",
+      "user_request": ""
+    },
+    "output": { "aspect_ratio": "4:5", "resolution": "2K", "orientation": "vertical" },
+    "scene": {
+      "regime": "edit",
+      "headline": "Edit the provided reference image. Replace the background only",
+      "has_person": true,
+      "setting": "interior_practical"
+    },
+    "subject": {
+      "description": "The subject already present in the reference frame — the same person, unaltered",
+      "asymmetries": ["preserved from the source frame; do not re-derive"],
+      "preserved_marks": ["preserved from the source frame; do not re-derive"],
+      "expression": "preserved from the source frame"
+    },
+    "camera": {
+      "body": "matches the source frame",
+      "sensor_format": "medium_format",
+      "focal_length_mm": 110,
+      "aperture_f": 4,
+      "shutter": "1/250s",
+      "iso": 50,
+      "distance_m": 2.1,
+      "height": "matches the source frame",
+      "focal_plane": {
+        "in_focus": ["the near eye, unchanged from the source"],
+        "out_of_focus": ["the new background rendered to match the shallow depth of field already present in the source frame"]
+      }
+    },
+    "lighting": {
+      "sources": [
+        { "role": "key", "modifier": "already visible on the subject's face — soft, camera-left", "size_m": 1.5, "distance_m": 1.4, "azimuth_deg": 40, "elevation": "slightly above eye level", "colour_temp_k": 5600 }
+      ],
+      "key_fill_ratio": "3:1",
+      "shadow_direction": "matches the shadow direction already gravated in the subject; a single direction across subject and new environment"
+    },
+    "skin": {
+      "pore_scale": "unchanged from the source frame",
+      "specular_zones": "unchanged from the source frame; do not re-render the subject region"
+    },
+    "render": {
+      "colour_profile": "matched to the source frame",
+      "highlight_rolloff": "matches the source frame; no re-tonemapping",
+      "black_point": "matches the source frame near 8 percent luminance",
+      "grain": "fine luminance grain matching the source frame at ISO 50"
+    },
+    "frame": {
+      "composition": "unchanged from the source frame"
+    },
+    "edit": {
+      "preserve": [
+        "The subject is unchanged in every respect: facial identity and geometry, skin tone and texture including every mole and freckle, the exact hairstyle including any flyaway strands, the wardrobe with its existing creases, the pose and hand positions",
+        "No re-rendering of the subject region; the person in the output must be pixel-faithful to the person in the input"
+      ]
+    },
+    "imperfection_budget": [
+      { "category": "environment", "specific": "a single faint surface imperfection in the new environment, positioned outside critical focus" }
+    ],
+    "avoid": [
+      "change to facial features or skin tone",
+      "cut-out edges along the hair",
+      "halo along the hair edge",
+      "shadow direction disagreement between subject and environment",
+      "a second light direction on the face",
+      "added text",
+      "watermark",
+      "lens artifacts not present in the source"
+    ]
+  },
+
+  "example_answers": {
+    "meta.user_request": "tenho essa foto de estúdio, quero trocar o fundo para um escritório real mantendo a pessoa idêntica",
+    "edit.source_urls": ["https://example.com/reference/studio-portrait.jpg"],
+    "edit.replace": "The mid-grey seamless studio background becomes a corner office interior: floor-to-ceiling glass on the left side of frame roughly 3 metres from the subject, a pale oak desk with a glass top in the mid-ground camera-right, low bookshelves and a muted city view beyond the glass, rendered far enough out of focus to match the shallow depth of field already present in the source frame",
+    "edit.light_reconciliation": "The key light already visible on the subject's face is soft, camera-left, at roughly 40 degrees azimuth and slightly above eye level. The new environment must justify exactly that light: the window becomes its plausible source, with overcast daylight whose direction and softness match the existing shadow edge on the jaw. Ambient interior fill stays two stops under the key, slightly warm from recessed fixtures, and must not introduce a second catchlight or shift the existing one",
+    "edit.integration": "Contact shadow under the subject's shoes against low-pile carpet, dense at the sole and opening into a soft penumbra. An attenuated reflection of the subject in the glass desktop with correct perspective geometry and reduced contrast. Atmospheric softening toward the far end of the office consistent with the aperture implied by the source frame's focus falloff. Colour grading of the new background matched to the source frame's palette and highlight rolloff"
+  }
+}

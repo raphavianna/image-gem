@@ -1,0 +1,195 @@
+
+
+==== 1. Instalação limpa ====
+$ pip show imagegem | head -3
+Name: imagegem
+Version: 0.1.0
+Summary: Sistema de geração de prompts hiper-realistas para Nano Banana Pro
+ERROR: Pipe to stdout was broken
+  -> exit 0
+
+
+==== 2. Suíte de testes ====
+$ python3 tests/test_pipeline.py
+Bases:
+  exemplo-1-retrato-estudio.json         aprovada
+  exemplo-4-produto-estudio.json         aprovada
+  exemplo-3-edicao-fundo.json            aprovada
+
+Renderizadores:
+  ok    modalidade 1  620p, cauda 28p
+  ok    modalidade 2  617p, ar=4:5
+  ok    modalidade 3  POST https://platform.higgsfield.ai/nano-banana
+  ok    modalidade 4  gemini-3-pro-image + ImageConfig {'aspect_ratio': '4:5', 'image_size': '2K'}
+  ok    modalidade 3  aceita 21:9 (dentro do enum HF)
+
+Testes negativos — cada mutação deve disparar a regra correspondente:
+  ok    C1  ISO vs grão                   disparou
+  ok    C2  abertura vs plano focal       disparou
+  ok    C3  velocidade vs movimento       disparou
+  ok    C4  tamanho da fonte vs penumbra  disparou
+  ok    C5  catchlight vs modificador     disparou
+  ok    C6  direção de sombra única       disparou
+  ok    C7  flare exige fonte             disparou
+  ok    C9  tecido vs caimento            disparou
+  ok    C10 exterior exige sol            disparou
+  ok    C11 teto de referências           disparou
+  ok    C12 reflexo declara fonte         disparou
+  ok    C13 pessoa exige pele             disparou
+  ok    C14 edit exige bloco edit         disparou
+  ok    ck1 fonte completa                disparou
+  ok    ck5 imperfeição específica        disparou
+  ok    ck6 termos proibidos              disparou
+  ok    ck7 cauda sem conteúdo de cena    disparou
+  ok    ck8 orçamento de densidade        disparou
+
+18 testes negativos passaram, e as três bases seguem aprovadas.
+  -> exit 0
+
+
+==== 3. CLI: templates ====
+$ imagegem templates
+composicao-multi-referencia      regime=composition pessoa=True  — Composição multi-referência: combina até três papéis de imag
+consistencia-personagem          regime=generation  pessoa=True  — Consistência de personagem entre gerações — nova pose, novo 
+corpo-inteiro-locacao            regime=generation  pessoa=True  — Corpo inteiro em locação. Usa a locação como cenário fotogra
+edicao-troca-fundo               regime=edit        pessoa=True  — Variante de edição: troca de fundo preservando o sujeito. Gr
+produto-estudio                  regime=generation  pessoa=False — Foto de produto em estúdio, hero object, sem pessoa. Strip s
+retrato-ceu-aberto               regime=generation  pessoa=True  — Retrato editorial em céu aberto no fim da tarde. Contraluz d
+retrato-estudio                  regime=generation  pessoa=True  — Retrato editorial em estúdio, cintura para cima, key octabox
+still-moda                       regime=generation  pessoa=False — Still de moda sem pessoa: peça de vestuário disposta como ob
+  -> exit 0
+
+
+==== 4. Ciclo resolve → validate → render em cada template ====
+
+
+==== template: retrato-estudio ====
+$ imagegem resolve retrato-estudio --out /tmp/spec-retrato-estudio.json | tail -1
+spec escrito em /tmp/spec-retrato-estudio.json
+  -> exit 0
+$ imagegem validate /tmp/spec-retrato-estudio.json
+OK — corpo 620p, faixa 500–650
+  -> exit 0
+
+
+==== template: retrato-ceu-aberto ====
+$ imagegem resolve retrato-ceu-aberto --out /tmp/spec-retrato-ceu-aberto.json | tail -1
+spec escrito em /tmp/spec-retrato-ceu-aberto.json
+  -> exit 0
+$ imagegem validate /tmp/spec-retrato-ceu-aberto.json
+OK — corpo 641p, faixa 500–650
+  -> exit 0
+
+
+==== template: corpo-inteiro-locacao ====
+$ imagegem resolve corpo-inteiro-locacao --out /tmp/spec-corpo-inteiro-locacao.json | tail -1
+spec escrito em /tmp/spec-corpo-inteiro-locacao.json
+  -> exit 0
+$ imagegem validate /tmp/spec-corpo-inteiro-locacao.json
+OK — corpo 639p, faixa 500–650
+  -> exit 0
+
+
+==== template: produto-estudio ====
+$ imagegem resolve produto-estudio --out /tmp/spec-produto-estudio.json | tail -1
+spec escrito em /tmp/spec-produto-estudio.json
+  -> exit 0
+$ imagegem validate /tmp/spec-produto-estudio.json
+OK — corpo 549p, faixa 350–560
+  -> exit 0
+
+
+==== template: still-moda ====
+$ imagegem resolve still-moda --out /tmp/spec-still-moda.json | tail -1
+spec escrito em /tmp/spec-still-moda.json
+  -> exit 0
+$ imagegem validate /tmp/spec-still-moda.json
+OK — corpo 476p, faixa 350–560
+  -> exit 0
+
+
+==== template: edicao-troca-fundo ====
+$ imagegem resolve edicao-troca-fundo --out /tmp/spec-edicao-troca-fundo.json | tail -1
+spec escrito em /tmp/spec-edicao-troca-fundo.json
+  -> exit 0
+$ imagegem validate /tmp/spec-edicao-troca-fundo.json
+OK — corpo 290p, faixa 250–400
+  -> exit 0
+
+
+==== template: composicao-multi-referencia ====
+$ imagegem resolve composicao-multi-referencia --out /tmp/spec-composicao-multi-referencia.json | tail -1
+spec escrito em /tmp/spec-composicao-multi-referencia.json
+  -> exit 0
+$ imagegem validate /tmp/spec-composicao-multi-referencia.json
+OK — corpo 456p, faixa 350–560
+  -> exit 0
+
+
+==== template: consistencia-personagem ====
+$ imagegem resolve consistencia-personagem --out /tmp/spec-consistencia-personagem.json | tail -1
+spec escrito em /tmp/spec-consistencia-personagem.json
+  -> exit 0
+$ imagegem validate /tmp/spec-consistencia-personagem.json
+OK — corpo 453p, faixa 350–560
+  -> exit 0
+
+
+==== 5. Renderizadores em cada modalidade (exemplo 1) ====
+$ imagegem render /tmp/spec-retrato-estudio.json --modality 1 | head -3
+{
+  "modality": 1,
+  "corpo": "Editorial studio portrait, single subject, waist-up, vertical 4:5 frame.\n\nSUBJECT. A 34-year-old woman with warm olive skin, dark brown eyes and shoulder-length black hair worn loose with a natural side part. Her facial structure is specifically asymmetric: the left eyebrow sits marginally higher than the right, and the left corner of the mouth lifts slightly more. A 2mm mole below the outer corner of the right eye, three faint freckles across the bridge of the nose, a 4mm pale scar along the left jawline. Vellus hair is visible along the jaw and at the hairline, catching the rim light as a fine halo. The expression is a closed-mouth half-smile caught between beats, the eyes engaged and the mouth not yet fully settled.\n\nWARDROBE. A charcoal wool-crepe blazer over a bone raw-silk shell. The wool shows its twill weave at close range, with compression creases at the inner elbow, and a slight roll where the collar meets the neck.\n\nCAMERA AND OPTICS. Phase One XF IQ4 150MP, 110mm at f/4, 1/250s, ISO 50. Camera at subject eye height, 2.1 metres from the subject. Focal plane on the near eye; the far eye falls just outside critical focus; the wardrobe shoulder renders soft. Medium-format 110mm compression gives shallow facial perspective with no wide-angle nose enlargement. Bokeh is smooth and rounded at centre with mild cat-eye deformation toward the frame edges. Faint longitudinal chromatic aberration reads as a hairline magenta-green fringe on the specular highlight at the hair edge. Mechanical vignetting of roughly one third of a stop at the corners.\n\nLIGHTING. Key is a 1.5 metre indirect octabox, at 40 degrees azimuth and 25 degrees above the eye line, 1.4 metres away, producing a soft-edged shadow with a 3 to 4 centimetre penumbra along the jaw. Fill is a 1.2 metre white bounce card camera-right, at 320 degrees azimuth and at eye line, 1.8 metres away, holding the key-to-fill ratio at 3:1. A gridded strip box behind and camera-right, at 150 degrees azimuth and slightly above the shoulder line, 1.6 metres away lays a narrow rim on the subject. The mid-grey seamless background is lit separately at two stops under the key and falls off toward the frame corners. All sources at 5600K with no mixed colour temperature. The cast shadow falls down and camera-right, consistent for every element in the scene. The catchlight in each eye is a soft-cornered octagon mirroring the octabox at the ten o'clock position, smaller and dimmer in the far eye.\n\nSKIN. Rendered at true pore scale for this framing. Sebum specular sheen on the nose bridge, the centre of the forehead and the cupid's bow, with the T-zone measurably more reflective than the cheeks. Subsurface scattering warms the ear rims and the outer nostrils to a faint red. Fine dry texture on the lips with two visible vertical creases. Capillary flush across the cheekbones. Makeup is present but minimal, and the skin reads as skin rather than as a retouched surface.\n\nCOLOUR AND RENDER. Kodak Portra 400 palette: restrained saturation, warm midtones, greens pulled slightly cool. Highlight rolloff is gradual with no clipped white on the forehead. The deepest shadow in the wardrobe sits near 8 percent luminance rather than pure black. Fine luminance grain consistent with ISO 50 medium format with faint chroma noise on the shadow side of the neck.\n\nFRAME. Subject positioned slightly camera-left of centre with the gaze opening into the larger negative space. Headroom is tight, roughly 6 percent of frame height above the crown.\n\nCAPTURE REALITY. One strand of hair has fallen across the forehead and has not been styled back. One shoulder seam sits a few millimetres off square. This is a single working frame from a commercial session.",
+  -> exit 0
+$ imagegem render /tmp/spec-retrato-estudio.json --modality 2 | head -3
+{
+  "modality": 2,
+  "corpo": "Editorial studio portrait, single subject, waist-up.\n\nSUBJECT. A 34-year-old woman with warm olive skin, dark brown eyes and shoulder-length black hair worn loose with a natural side part. Her facial structure is specifically asymmetric: the left eyebrow sits marginally higher than the right, and the left corner of the mouth lifts slightly more. A 2mm mole below the outer corner of the right eye, three faint freckles across the bridge of the nose, a 4mm pale scar along the left jawline. Vellus hair is visible along the jaw and at the hairline, catching the rim light as a fine halo. The expression is a closed-mouth half-smile caught between beats, the eyes engaged and the mouth not yet fully settled.\n\nWARDROBE. A charcoal wool-crepe blazer over a bone raw-silk shell. The wool shows its twill weave at close range, with compression creases at the inner elbow, and a slight roll where the collar meets the neck.\n\nCAMERA AND OPTICS. Phase One XF IQ4 150MP, 110mm at f/4, 1/250s, ISO 50. Camera at subject eye height, 2.1 metres from the subject. Focal plane on the near eye; the far eye falls just outside critical focus; the wardrobe shoulder renders soft. Medium-format 110mm compression gives shallow facial perspective with no wide-angle nose enlargement. Bokeh is smooth and rounded at centre with mild cat-eye deformation toward the frame edges. Faint longitudinal chromatic aberration reads as a hairline magenta-green fringe on the specular highlight at the hair edge. Mechanical vignetting of roughly one third of a stop at the corners.\n\nLIGHTING. Key is a 1.5 metre indirect octabox, at 40 degrees azimuth and 25 degrees above the eye line, 1.4 metres away, producing a soft-edged shadow with a 3 to 4 centimetre penumbra along the jaw. Fill is a 1.2 metre white bounce card camera-right, at 320 degrees azimuth and at eye line, 1.8 metres away, holding the key-to-fill ratio at 3:1. A gridded strip box behind and camera-right, at 150 degrees azimuth and slightly above the shoulder line, 1.6 metres away lays a narrow rim on the subject. The mid-grey seamless background is lit separately at two stops under the key and falls off toward the frame corners. All sources at 5600K with no mixed colour temperature. The cast shadow falls down and camera-right, consistent for every element in the scene. The catchlight in each eye is a soft-cornered octagon mirroring the octabox at the ten o'clock position, smaller and dimmer in the far eye.\n\nSKIN. Rendered at true pore scale for this framing. Sebum specular sheen on the nose bridge, the centre of the forehead and the cupid's bow, with the T-zone measurably more reflective than the cheeks. Subsurface scattering warms the ear rims and the outer nostrils to a faint red. Fine dry texture on the lips with two visible vertical creases. Capillary flush across the cheekbones. Makeup is present but minimal, and the skin reads as skin rather than as a retouched surface.\n\nCOLOUR AND RENDER. Kodak Portra 400 palette: restrained saturation, warm midtones, greens pulled slightly cool. Highlight rolloff is gradual with no clipped white on the forehead. The deepest shadow in the wardrobe sits near 8 percent luminance rather than pure black. Fine luminance grain consistent with ISO 50 medium format with faint chroma noise on the shadow side of the neck.\n\nFRAME. Subject positioned slightly camera-left of centre with the gaze opening into the larger negative space. Headroom is tight, roughly 6 percent of frame height above the crown.\n\nCAPTURE REALITY. One strand of hair has fallen across the forehead and has not been styled back. One shoulder seam sits a few millimetres off square. This is a single working frame from a commercial session.",
+  -> exit 0
+$ imagegem render /tmp/spec-retrato-estudio.json --modality 3 | head -3
+{
+  "modality": 3,
+  "envelope": {
+  -> exit 0
+$ imagegem render /tmp/spec-retrato-estudio.json --modality 4 | head -3
+{
+  "modality": 4,
+  "envelope": {
+  -> exit 0
+
+
+==== 6. Submit em simulação — modalidade 3 e 4 ====
+$ imagegem submit /tmp/spec-retrato-estudio.json --modality 3
+[higgsfield:simulacao] payload que iria para POST /nano-banana:
+  url:           https://platform.higgsfield.ai/nano-banana
+  aspect_ratio:  4:5
+  num_images:    1
+  prompt:        645 palavras
+  input_images:  0
+registro salvo em /home/user/image-gem/runs/20260816-210336-retrato-estudio
+OK — modo=simulacao status=simulated
+  -> exit 0
+$ imagegem submit /tmp/spec-retrato-estudio.json --modality 4
+[gemini:simulacao] payload que iria para google-genai:
+  model:  gemini-3-pro-image
+  image:  aspect_ratio=4:5, image_size=2K
+  prompt: 645 palavras
+registro salvo em /home/user/image-gem/runs/20260816-210336-retrato-estudio
+OK — modo=simulacao status=completed
+  -> exit 0
+
+
+==== 7. Runs list ====
+$ imagegem runs --limit 5
+EXEMPLO-e6-registro-ancora  completed  retrato-estudio              mod=4 verdict=mixed
+20260816-210336-retrato-estudio  completed  retrato-estudio              mod=4 verdict=-
+  -> exit 0
+
+
+==== 8. Política de conteúdo ====
+$ python3 -c 'from imagegem import policy; [print(f"{v.permitido!s:5}  {p}") for p, v in [(x, policy.check_pedido(x, False)) for x in ["foto de crianca de 8 anos", "foto de passaporte falso", "retrato editorial de uma mulher", "foto do Barack Obama"]]]'
+False  foto de crianca de 8 anos
+False  foto de passaporte falso
+True   retrato editorial de uma mulher
+False  foto do Barack Obama
+  -> exit 0

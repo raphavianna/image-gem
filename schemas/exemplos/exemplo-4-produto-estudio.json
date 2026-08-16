@@ -1,0 +1,143 @@
+{
+  "spec_version": "1.0",
+  "meta": {
+    "id": "exemplo-4-produto-estudio",
+    "modality": 1,
+    "target_model": "gemini-3-pro-image",
+    "user_request": "foto de produto premium de um relógio de pulso mecânico para e-commerce de luxo",
+    "template": "produto-estudio"
+  },
+  "output": {
+    "aspect_ratio": "4:5",
+    "resolution": "2K",
+    "orientation": "vertical"
+  },
+  "scene": {
+    "regime": "generation",
+    "headline": "Studio product photograph, single hero object. A men's mechanical wristwatch resting at a 15-degree tilt on a slab of honed dark grey slate, strap partly unfolded toward the camera",
+    "has_person": false,
+    "setting": "studio"
+  },
+  "camera": {
+    "body": "Fujifilm GFX100 II",
+    "sensor_format": "medium_format",
+    "focal_length_mm": 120,
+    "aperture_f": 11,
+    "shutter": "1/125s",
+    "iso": 100,
+    "distance_m": 0.6,
+    "height": "10 degrees above the dial plane",
+    "focal_plane": {
+      "in_focus": [
+        "the dial centre"
+      ],
+      "out_of_focus": [
+        "the strap tail softens progressively",
+        "the far edge of the slate softens progressively"
+      ]
+    },
+    "focus_stacking": false,
+    "perspective_note": "120mm macro on medium format holds the case geometry without wide-angle distortion of the bezel"
+  },
+  "optics": {
+    "bokeh_character": "progressive falloff behind the dial plane with no swirl at the frame edge"
+  },
+  "lighting": {
+    "sources": [
+      {
+        "role": "key",
+        "modifier": "90 by 30 centimetre strip softbox overhead camera-left",
+        "size_m": 0.9,
+        "distance_m": 0.7,
+        "azimuth_deg": 45,
+        "elevation": "70 degrees above the dial plane",
+        "colour_temp_k": 5600,
+        "feathering": "feathered so its reflection lands on the crystal as one continuous soft-edged white band running upper-left to lower-right, never a hotspot"
+      },
+      {
+        "role": "fill",
+        "modifier": "large white card camera-right",
+        "size_m": 1.0,
+        "distance_m": 0.5,
+        "azimuth_deg": 300,
+        "elevation": "at the dial plane",
+        "colour_temp_k": 5600
+      }
+    ],
+    "key_fill_ratio": "4:1",
+    "penumbra": {
+      "width_cm": "1 to 2",
+      "location": "across the slate away from the case"
+    },
+    "shadow_direction": "falls down and camera-right from the overhead key, consistent for the case, the strap and the slate",
+    "contact_shadow": "The contact shadow under the case is tight and dense, opening into a soft penumbra across the slate",
+    "background_treatment": "A black flag below the camera line deepens the near chamfer into a defined dark gradient"
+  },
+  "materials": [
+    {
+      "surface": "40mm brushed stainless steel case with polished chamfered bezel edges",
+      "finish": "brushed",
+      "specular_response": "the radial brushing shows fine directional grain under the key light while the chamfers read as bright specular lines",
+      "reflects": "the polished bezel carries a legible, geometrically correct reflection of the strip light; the brushed flanks scatter it into a broad directional sheen"
+    },
+    {
+      "surface": "deep blue sunburst dial with applied polished indices",
+      "finish": "polished",
+      "specular_response": "the sunburst sheen rotates with the light angle, brightening along the radial grain",
+      "reflects": "the applied indices return a compressed image of the strip softbox",
+      "typography": "printed white minute track with crisp, correctly kerned typography"
+    },
+    {
+      "surface": "sapphire crystal with anti-reflective coating",
+      "finish": "coated_glass",
+      "specular_response": "transmits cleanly with a faint blue-violet cast at glancing angle",
+      "reflects": "one continuous soft-edged band from the strip softbox, nothing else"
+    },
+    {
+      "surface": "vegetable-tanned brown leather strap with cream saddle stitching",
+      "finish": "leather",
+      "specular_response": "broad diffuse scatter with micro-specular on the raised grain, darkening where the leather folds at the spring bars",
+      "manufacturing_defect": "one stitch sits fractionally tighter than its neighbours, and a hairline handling mark crosses the clasp, visible only in the specular band"
+    },
+    {
+      "surface": "slab of honed dark grey slate",
+      "finish": "honed",
+      "specular_response": "returns a dim diffuse double, never a mirror image",
+      "reflects": "a dim diffuse double of the case, no legible detail"
+    }
+  ],
+  "reflection_closure": "Nothing in the reflections implies a light source that is not declared",
+  "render": {
+    "colour_profile": "neutral digital profile, no film emulation",
+    "highlight_rolloff": "Gradual highlight rolloff on the chamfers with no clipped whites",
+    "black_point": "deepest shadow under the case near 5 percent luminance",
+    "grain": "Very fine luminance grain consistent with ISO 100"
+  },
+  "frame": {
+    "composition": "Hero object centred with the strap tail leading toward the lower-right corner",
+    "headroom": "roughly 12 percent margin above the case"
+  },
+  "imperfection_budget": [
+    {
+      "category": "environment",
+      "specific": "A single mote of dust rests on the slate 3 centimetres from the strap, just outside critical focus"
+    },
+    {
+      "category": "capture",
+      "specific": "The hands are set at 10:09 with the seconds hand caught mid-sweep between markers"
+    }
+  ],
+  "capture_reality": "A single frame from a commercial product session",
+  "avoid": [
+    "3D render",
+    "CGI look",
+    "floating object without contact shadow",
+    "blown specular hotspot on the crystal",
+    "impossibly clean surfaces",
+    "mirror-perfect reflection symmetry",
+    "deformed dial typography",
+    "oversharpened edges",
+    "watermark",
+    "text overlay"
+  ]
+}

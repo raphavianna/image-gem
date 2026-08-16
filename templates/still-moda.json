@@ -1,0 +1,112 @@
+{
+  "template_id": "still-moda",
+  "template_version": "1.0",
+  "description": "Still de moda sem pessoa: peça de vestuário disposta como objeto, com foco em tecido, ponto e queda. Uso: catálogo editorial, look book, cover art.",
+  "regime": "generation",
+  "has_person": false,
+  "aliases": ["fashion still", "flat lay editorial", "garment still life"],
+
+  "ask_before": [
+    { "field": "scene.headline", "prompt": "Abertura: tipo de peça, disposição na cena, superfície e altura. Ex.: 'A wool blazer draped over a raw-timber bench, sleeves crossed and one lapel folded'." },
+    { "field": "wardrobe", "prompt": "Peças na cena, cada uma com tecido, trama, vincos de tensão e caimento. Um still de moda que não descreve tecido em detalhe cai no vale da uniformidade." },
+    { "field": "materials", "prompt": "Superfícies do cenário (mesa, madeira, tecido de fundo) — cada uma declara acabamento e resposta especular. Zero se o fundo for seamless." },
+    { "field": "output.aspect_ratio", "prompt": "Proporção. Recomendado 4:5 vertical para catálogo, 1:1 para carrossel." }
+  ],
+
+  "defaults": {
+    "spec_version": "1.0",
+    "meta": {
+      "modality": 1,
+      "target_model": "gemini-3-pro-image",
+      "user_request": ""
+    },
+    "output": { "resolution": "2K", "orientation": "vertical" },
+    "scene": {
+      "regime": "generation",
+      "has_person": false,
+      "setting": "studio"
+    },
+    "camera": {
+      "body": "Phase One XF IQ4 150MP",
+      "sensor_format": "medium_format",
+      "focal_length_mm": 80,
+      "aperture_f": 8,
+      "shutter": "1/125s",
+      "iso": 100,
+      "distance_m": 1.4,
+      "height": "45 degrees above the surface, looking three quarters down at the garment",
+      "focal_plane": {
+        "in_focus": ["the collar and the near sleeve seam"],
+        "out_of_focus": [
+          "the far sleeve softens progressively",
+          "the back edge of the surface softens progressively"
+        ]
+      },
+      "focus_stacking": false,
+      "perspective_note": "80mm on medium format at 1.4 metres holds the garment proportions without perspective distortion of the near lapel"
+    },
+    "optics": {
+      "bokeh_character": "shallow progressive falloff on the far side of the garment with no swirl at the frame edge"
+    },
+    "lighting": {
+      "sources": [
+        { "role": "key", "modifier": "1.2 by 1.8 metre softbox overhead camera-left, tilted at 30 degrees", "size_m": 1.5, "distance_m": 1.3, "azimuth_deg": 55, "elevation": "80 degrees above the surface", "colour_temp_k": 5600 },
+        { "role": "fill", "modifier": "large white bounce card camera-right at the surface level", "size_m": 1.2, "distance_m": 0.6, "azimuth_deg": 280, "elevation": "at surface height", "colour_temp_k": 5600 }
+      ],
+      "key_fill_ratio": "3:1",
+      "penumbra": { "width_cm": "2 to 3", "location": "along the garment folds where the fabric folds against the surface" },
+      "shadow_direction": "falls down and camera-right across the surface, consistent for the garment and any props",
+      "contact_shadow": "the shadow of the garment on the surface is dense along the fold lines and opens into a soft penumbra away from the fabric"
+    },
+    "render": {
+      "colour_profile": "Kodak Portra 400",
+      "palette_note": "warm midtones, restrained saturation on the wardrobe colour",
+      "highlight_rolloff": "gradual rolloff on the specular fibre highlights without clipping",
+      "black_point": "deepest shadow inside the folds near 6 percent luminance",
+      "grain": "fine luminance grain consistent with ISO 100"
+    },
+    "frame": {
+      "composition": "garment centred with air on all four sides; leading edge of the fabric pointing toward the lower-right",
+      "headroom": "even margin of roughly 10 percent above the highest fabric point"
+    },
+    "imperfection_budget": [
+      { "category": "manufacturing", "specific": "one thread along the lapel seam sits fractionally proud of the rest, catching the specular" },
+      { "category": "capture", "specific": "one fold has settled asymmetrically and reads slightly off the intended styling" }
+    ],
+    "capture_reality": "A single frame from a working catalogue session",
+    "avoid": [
+      "3D render", "CGI look",
+      "floating fabric without contact shadow",
+      "uniform fibre response across the whole garment",
+      "impossibly clean fabric",
+      "mirror-perfect fold symmetry",
+      "deformed label typography",
+      "oversharpened stitch",
+      "watermark", "text overlay"
+    ]
+  },
+
+  "example_answers": {
+    "meta.user_request": "still editorial de um blazer de lã sobre uma bancada de madeira crua para look book de outono",
+    "output.aspect_ratio": "4:5",
+    "scene.headline": "Studio garment still. A charcoal wool-crepe blazer draped over a raw-oak bench, one lapel folded back, sleeves crossed over the seat",
+    "wardrobe": [
+      {
+        "garment": "the blazer itself",
+        "fabric": "wool crepe",
+        "weave": "the wool shows its twill weave under the key light, with a fine directional grain along the shoulder",
+        "tension_creases": [
+          "compression creases at the inner elbow of the folded sleeve",
+          "a slight roll where the lapel folds back on itself",
+          "a diagonal crease from the button across the front where the fabric collapses"
+        ],
+        "drape": "the wool falls with heavy structured weight, holding broad folds without any fluid movement",
+        "wear": "very faint pilling at the elbow fold, imperceptible except under the direct specular"
+      }
+    ],
+    "materials": [
+      { "surface": "raw-oak bench top with visible saw marks", "finish": "raw", "specular_response": "the wood grain scatters the key into a broad directional sheen along the grain, with the saw marks reading as fine linear specular breaks" },
+      { "surface": "matte concrete floor 30 centimetres below the bench", "finish": "matte", "specular_response": "returns a soft diffuse fill with no legible reflection" }
+    ]
+  }
+}
