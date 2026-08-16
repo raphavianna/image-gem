@@ -19,9 +19,9 @@ Atualizado em: **2026-08-16**
 | **E2 — Gramática do prompt** | **Concluída e aprovada.** `docs/02-gramatica-do-prompt.md`, `schemas/`, commit `ea52f57` |
 | **E3 — Modalidades** | **Concluída e aprovada.** `docs/03-modalidades/`, commit `4f95674` |
 | **E4 — Biblioteca de templates** | **Concluída e aprovada.** `templates/`, commit `62fd37d` |
-| **E5 — Implementação** | **Concluída, aguardando aprovação no gate.** `src/imagegem/`, CLI `imagegem`, `mcp_server/`, `.claude/skills/imagegem/`, `docs/05-implementacao.md` |
-| E6 — Loop de retroalimentação | **Próxima.** Aguardando aprovação de E5 |
-| E7 — Validação e fechamento | Não iniciada |
+| **E5 — Implementação** | **Concluída e aprovada.** `src/imagegem/`, `mcp_server/`, `.claude/skills/imagegem/`, commit `1cad865` |
+| **E6 — Loop de retroalimentação** | **Concluída, aguardando aprovação no gate.** `schemas/run-record.json`, `docs/04-aprendizados.md`, `docs/06-loop.md`, `runs/EXEMPLO-e6-registro-ancora/`, comandos `runs` e `review` na CLI |
+| E7 — Validação e fechamento | **Próxima.** Aguardando aprovação de E6 |
 
 ## Decisões travadas (não reabrir)
 

@@ -75,3 +75,14 @@ Ao final de uma geração, sempre mostre:
 3. Modalidade escolhida e por quê.
 4. O prompt renderizado (só em modalidade 1/2) ou o `request_id` (modalidade 3) ou o caminho da imagem em `runs/` (modalidade 4).
 5. Se está em simulação, dizer explicitamente.
+
+## Loop de retroalimentação (E6) — regra operacional
+
+Este é o único caminho para que aprendizados não morram em conversa. Herdada da E6, obrigatória:
+
+1. **Toda geração que recebe avaliação vira registro.** `submit` grava em `runs/` sem opt-out. Se o autor comentar "isso ficou ruim porque o brilho da pele está uniforme", proponha imediatamente `imagegem review RUN_ID --verdict rejected --signal "brilho uniforme|Brilho uniforme no rosto|skin.specular_zones" --follow-up "doctrine|reforçar gradiente da zona T|docs/01-doutrina-hiper-realismo.md"`.
+2. **Toda correção que aparece duas vezes vira issue.** Ao fim de cada geração revisada, rode `imagegem runs --pending` e destaque quaisquer `target` que apareçam mais de uma vez — sinal para subir a correção para doutrina/template/checklist.
+3. **Nenhum aprendizado morre em conversa.** Se o autor menciona um problema sem chamar `review`, ofereça o comando exato. Se ele descreve uma correção sem promover, ofereça o edit do arquivo alvo e o caminho para preencher `promoted_to`.
+4. **Aprendizado sem prova rastreável não entra em `docs/04-aprendizados.md`.** Cada linha aponta para um registro em `runs/`, um commit, ou um arquivo versionado que carrega a evidência.
+
+Ver `docs/06-loop.md` para o formato completo do registro (schema em `schemas/run-record.json`) e o registro-âncora versionado em `runs/EXEMPLO-e6-registro-ancora/`.

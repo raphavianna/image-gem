@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/raphavianna/image-gem/schemas/run-record.json",
+  "title": "image-gem — registro de execução",
+  "description": "Esquema formal do registro em runs/. Consumido pelo loop da E6. Cada campo existe para dar chave de correlação entre spec, resultado e aprendizado.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_version",
+    "id",
+    "started_at",
+    "finished_at",
+    "status",
+    "template",
+    "template_version",
+    "spec_hash",
+    "schema_version",
+    "modality",
+    "client",
+    "defaults_applied_count"
+  ],
+
+  "properties": {
+    "record_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Versão do esquema do registro. Incrementa em mudança incompatível."
+    },
+    "id": {
+      "type": "string",
+      "description": "Identificador único da execução, também o nome da pasta em runs/."
+    },
+    "started_at": {
+      "type": "number",
+      "description": "Unix epoch em segundos, UTC."
+    },
+    "finished_at": {
+      "type": ["number", "null"]
+    },
+    "duration_ms": {
+      "type": ["integer", "null"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["started", "completed", "failed", "nsfw", "canceled", "simulated"],
+      "description": "Estado terminal. 'simulated' quando o cliente rodou sem credencial."
+    },
+    "error": {
+      "type": ["string", "null"]
+    },
+
+    "template": {
+      "type": "string",
+      "description": "template_id que originou o spec."
+    },
+    "template_version": {
+      "type": "string",
+      "description": "template_version usada na resolução."
+    },
+    "spec_hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "Hash SHA-256 do spec canônico serializado. Chave de comparação entre execuções."
+    },
+    "schema_version": {
+      "type": "string",
+      "description": "spec_version do prompt-spec.json em vigor no momento da execução."
+    },
+
+    "modality": {
+      "type": "integer",
+      "enum": [1, 2, 3, 4]
+    },
+    "client": {
+      "type": "string",
+      "enum": ["gemini", "higgsfield", "manual"],
+      "description": "'manual' para modalidades 1 e 2, que não têm cliente executor."
+    },
+    "correlation_id": {
+      "type": ["string", "null"],
+      "description": "X-Correlation-ID da Higgsfield, quando aplicável."
+    },
+    "request_id": {
+      "type": ["string", "null"]
+    },
+
+    "defaults_applied_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Contagem de caminhos que vieram do template em vez do usuário. A trilha completa mora em spec.json/meta.defaults_applied."
+    },
+    "prompt_word_count": {
+      "type": ["integer", "null"]
+    },
+    "checklist_signature": {
+      "type": "string",
+      "description": "Concatenação de ids das regras+checks que rodaram, ex. 'C1|C2|C3|C6|ck1|ck5|ck6|ck7|ck8'. Serve para provar que dois registros foram avaliados com o mesmo rigor.",
+      "default": ""
+    },
+
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Seção de avaliação. Preenchida por `imagegem review` ou pela E6 direto. Ausente em registros ainda não revisados.",
+      "required": ["verdict", "reviewer", "reviewed_at"],
+      "properties": {
+        "verdict": {
+          "type": "string",
+          "enum": ["approved", "rejected", "mixed"],
+          "description": "'mixed' quando parte da saída passa e parte não — série de variantes, por exemplo."
+        },
+        "rating": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "reviewer": {
+          "type": "string",
+          "description": "Quem avaliou. 'user' para o autor, 'skill' para autoavaliação da Skill."
+        },
+        "reviewed_at": {
+          "type": "number"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "signals": {
+          "type": "array",
+          "description": "Sinais de IA observados na saída, mapeados quando possível para as linhas da tabela diagnóstica em docs/01-doutrina-hiper-realismo.md.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["signal"],
+            "properties": {
+              "signal": { "type": "string" },
+              "doctrine_row": { "type": "string", "description": "Coluna 1 da tabela diagnóstica, ex. 'Sujeito parece flutuar sobre o chão'." },
+              "schema_field": { "type": "string", "description": "Campo do schema onde a correção mora, quando aplicável." }
+            }
+          }
+        },
+        "follow_ups": {
+          "type": "array",
+          "description": "Ações propostas a partir deste registro.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "description"],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": ["doctrine", "template", "checklist", "rule", "client", "docs", "none"],
+                "description": "Onde a correção subiria. 'none' documenta observação sem ação."
+              },
+              "target": {
+                "type": "string",
+                "description": "Arquivo/id concreto, ex. 'templates/retrato-estudio.json' ou 'C4'."
+              },
+              "description": { "type": "string" },
+              "promoted_to": {
+                "type": "string",
+                "description": "SHA ou caminho do artefato que absorveu esta correção, preenchido depois da promoção."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -77,6 +77,9 @@ def _cmd_resolve(args) -> int:
 
 def _cmd_submit(args) -> int:
     spec = _carrega(args.spec)
+    # A modalidade da execução vence a do spec — o registro em runs/ precisa
+    # refletir onde a chamada foi feita, não onde o template planejava ir.
+    spec["meta"]["modality"] = args.modality
 
     # Valida antes de gastar créditos.
     falhas, corpo, cauda = check.validate(spec)
@@ -147,6 +150,54 @@ def _cmd_templates(args) -> int:
     return 0
 
 
+def _cmd_runs(args) -> int:
+    """Lista registros de execução — insumo da E6."""
+    if args.pending:
+        pendentes = runs.pending_follow_ups(limit=args.limit)
+        if not pendentes:
+            print("nenhum follow-up pendente.")
+            return 0
+        for fu in pendentes:
+            print(f"{fu['run_id']}  {fu['kind']:10} {fu.get('target','-'):32} {fu['description'][:60]}")
+        return 0
+    metas = runs.list_recent(limit=args.limit, only_reviewed=args.reviewed)
+    if not metas:
+        print("nenhum registro em runs/.")
+        return 0
+    for m in metas:
+        v = (m.get("review") or {}).get("verdict", "-")
+        print(f"{m['id']}  {m['status']:10} {m['template']:28} mod={m['modality']} verdict={v}")
+    return 0
+
+
+def _cmd_review(args) -> int:
+    """Registra a avaliação de um run — implementação da regra operacional da E6."""
+    signals = []
+    if args.signal:
+        for s in args.signal:
+            partes = s.split("|", 2)
+            signals.append({"signal": partes[0], "doctrine_row": partes[1] if len(partes) > 1 else "", "schema_field": partes[2] if len(partes) > 2 else ""})
+    follow_ups = []
+    if args.follow_up:
+        for fu in args.follow_up:
+            partes = fu.split("|", 2)
+            if len(partes) < 2:
+                print(f"ERRO: --follow-up exige 'kind|description[|target]'")
+                return 1
+            follow_ups.append({"kind": partes[0], "description": partes[1], "target": partes[2] if len(partes) > 2 else ""})
+    pasta = runs.review(
+        args.run_id,
+        verdict=args.verdict,
+        reviewer=args.reviewer,
+        rating=args.rating,
+        notes=args.notes or "",
+        signals=signals or None,
+        follow_ups=follow_ups or None,
+    )
+    print(f"review gravada em {pasta}/metadata.json")
+    return 0
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog="imagegem", description=__doc__.strip().splitlines()[0])
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -174,6 +225,22 @@ def main(argv=None) -> int:
 
     p = sub.add_parser("templates", help="lista todos os templates disponíveis")
 
+    p = sub.add_parser("runs", help="lista registros de execução")
+    p.add_argument("--limit", type=int, default=20)
+    p.add_argument("--reviewed", action="store_true", help="só os já avaliados")
+    p.add_argument("--pending", action="store_true", help="só follow-ups pendentes de promoção")
+
+    p = sub.add_parser("review", help="registra a avaliação de um run — insumo da E6")
+    p.add_argument("run_id", help="id do run (nome da pasta) ou caminho absoluto")
+    p.add_argument("--verdict", required=True, choices=["approved", "rejected", "mixed"])
+    p.add_argument("--rating", type=int, choices=range(1, 6))
+    p.add_argument("--reviewer", default="user")
+    p.add_argument("--notes", default="")
+    p.add_argument("--signal", action="append", metavar="SIGNAL|DOCTRINE_ROW|SCHEMA_FIELD",
+                   help="pode repetir; separado por '|' — só o primeiro campo é obrigatório")
+    p.add_argument("--follow-up", action="append", metavar="KIND|DESCRIPTION|TARGET",
+                   help="pode repetir; kind ∈ {doctrine,template,checklist,rule,client,docs,none}")
+
     args = parser.parse_args(argv)
     return {
         "validate": _cmd_validate,
@@ -182,6 +249,8 @@ def main(argv=None) -> int:
         "submit":   _cmd_submit,
         "estimate": _cmd_estimate,
         "templates": _cmd_templates,
+        "runs":     _cmd_runs,
+        "review":   _cmd_review,
     }[args.cmd](args)
 
 

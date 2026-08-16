@@ -1,0 +1,71 @@
+{
+  "record_version": "1.0",
+  "id": "EXEMPLO-e6-registro-ancora",
+  "started_at": 1786913012.9101617,
+  "finished_at": 1786913012.9101622,
+  "duration_ms": 0,
+  "status": "completed",
+  "error": null,
+  "template": "retrato-estudio",
+  "template_version": "1.0",
+  "spec_hash": "sha256:505231841e747e47f362ef3ca6acd119e813a7313b89738681ada58b2c3ba64a",
+  "schema_version": "1.0",
+  "modality": 4,
+  "client": "gemini",
+  "correlation_id": null,
+  "request_id": null,
+  "defaults_applied_count": 85,
+  "prompt_word_count": 648,
+  "checklist_signature": "C1|C2|C3|C4|C5|C6|C9|C13|ck1|ck2|ck3|ck4a|ck5|ck6|ck7|ck8",
+  "review": {
+    "verdict": "mixed",
+    "reviewer": "user",
+    "reviewed_at": 1786913036.1499434,
+    "notes": "Registro-âncora do loop de E6. Como está em modo simulação (sem GEMINI_API_KEY), a avaliação é sobre o payload rendered, não sobre uma imagem real. Os sinais e follow-ups abaixo são reais e derivados dos achados das etapas E1–E5, para que este registro documente retroativamente o loop.",
+    "rating": 4,
+    "signals": [
+      {
+        "signal": "penumbra descrita mas não medida contra tamanho angular declarado",
+        "doctrine_row": "Sombra com dureza incompatível com a fonte",
+        "schema_field": "lighting.penumbra.width_cm"
+      },
+      {
+        "signal": "referências de identidade limitadas a 5, não 6 como decisão inicial",
+        "doctrine_row": "—",
+        "schema_field": "character.identity_reference_count"
+      },
+      {
+        "signal": "faixa de densidade não trata composição ancorada em referência de forma diferente",
+        "doctrine_row": "Corpo pesando menos que a faixa por regime",
+        "schema_field": "x-imagegem.orcamento_densidade.faixas"
+      }
+    ],
+    "follow_ups": [
+      {
+        "kind": "doctrine",
+        "description": "corrigir teto de referências de identidade de 6 para 5",
+        "target": "docs/01-doutrina-hiper-realismo.md seção 5"
+      },
+      {
+        "kind": "checklist",
+        "description": "adicionar faixa 'ancorada em referência' com prioridade sobre regime",
+        "target": "schemas/prompt-spec.json x-imagegem"
+      },
+      {
+        "kind": "docs",
+        "description": "documentar preço 1K = 2K, default do sistema 2K",
+        "target": "docs/00-fontes/06-fonte-primaria-ai-google-dev.md"
+      },
+      {
+        "kind": "template",
+        "description": "separar geometria de reflexo em bloco próprio no schema",
+        "target": "schemas/prompt-spec.json materials/reflection_closure"
+      },
+      {
+        "kind": "client",
+        "description": "corrigir credencial Higgsfield: Key ID:SECRET (não refresh_token)",
+        "target": "src/imagegem/clients/higgsfield.py"
+      }
+    ]
+  }
+}
