@@ -1,0 +1,11 @@
+Edit the provided reference image. Replace the background only, vertical 4:5 frame.
+
+PRESERVE. The subject is unchanged in every respect: facial identity and geometry, skin tone and texture including every mole and freckle, the exact hairstyle including the flyaway strands at the crown, the wardrobe with its existing creases, the pose and hand positions. No re-rendering of the subject region; the person in the output must be pixel-faithful to the person in the input.
+
+REPLACE. The mid-grey seamless studio background becomes a corner office interior: floor-to-ceiling glass on the left side of frame roughly 3 metres from the subject, a pale oak desk with a glass top in the mid-ground camera-right, low bookshelves and a muted city view beyond the glass, rendered far enough out of focus to match the shallow depth of field already present in the source frame.
+
+RECONCILE LIGHT. The key light already visible on the subject's face is soft, camera-left, at roughly 40 degrees azimuth and slightly above eye level. The new environment must justify exactly that light: the window becomes its plausible source, with overcast daylight whose direction and softness match the existing shadow edge on the jaw. Ambient interior fill stays two stops under the key, slightly warm from recessed fixtures, and must not introduce a second catchlight or shift the existing one.
+
+GROUND AND INTEGRATE. Contact shadow under the subject's shoes against low-pile carpet, dense at the sole and opening into a soft penumbra. An attenuated reflection of the subject in the glass desktop with correct perspective geometry and reduced contrast. Atmospheric softening toward the far end of the office consistent with the aperture implied by the source frame's focus falloff. Colour grading of the new background matched to the source frame's palette and highlight rolloff.
+
+AVOID: change to facial features or skin tone, cut-out edges along the hair, halo along the hair edge, shadow direction disagreement between subject and environment, a second light direction on the face, added text, watermark, lens artifacts not present in the source.

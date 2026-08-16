@@ -5,7 +5,7 @@
   "description": "Representação intermediária única de um pedido de imagem. Toda modalidade é um renderizador sobre este schema. Definido na etapa E2; a doutrina que ele codifica está em docs/01-doutrina-hiper-realismo.md.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["spec_version", "meta", "output", "scene", "camera", "optics", "lighting", "render", "frame", "imperfection_budget", "avoid"],
+  "required": ["spec_version", "meta", "output", "scene", "camera", "lighting", "render", "frame", "imperfection_budget", "avoid"],
 
   "properties": {
     "spec_version": {
@@ -490,7 +490,7 @@
       { "id": "C2", "eixo": 1, "check": "aperture_vs_focal_plane", "descricao": "Abertura larga exige plano focal com elementos fora de foco declarados.", "aplica_quando": "sempre" },
       { "id": "C3", "eixo": 1, "check": "shutter_vs_motion", "descricao": "Velocidade lenta exige arrasto de movimento declarado; velocidade alta não admite arrasto.", "aplica_quando": "sempre" },
       { "id": "C4", "eixo": 2, "check": "source_size_vs_penumbra", "descricao": "A largura da penumbra corresponde ao tamanho angular da fonte principal.", "aplica_quando": "scene.setting == studio" },
-      { "id": "C5", "eixo": 2, "check": "catchlight_vs_modifier", "descricao": "A forma do catchlight corresponde ao modificador da key.", "aplica_quando": "scene.has_person" },
+      { "id": "C5", "eixo": 2, "check": "catchlight_vs_modifier", "descricao": "A forma do catchlight corresponde ao modificador da key.", "aplica_quando": "scene.has_person and scene.regime != edit" },
       { "id": "C6", "eixo": 2, "check": "single_shadow_direction", "descricao": "Existe uma e só uma direção de sombra projetada declarada.", "aplica_quando": "sempre" },
       { "id": "C7", "eixo": 1, "check": "flare_requires_source", "descricao": "Veiling flare exige fonte de luz no quadro ou em ângulo de incidência.", "aplica_quando": "optics.veiling_flare presente" },
       { "id": "C9", "eixo": 5, "check": "fabric_vs_drape", "descricao": "Tecido nomeado exige caimento correspondente declarado.", "aplica_quando": "wardrobe não vazio" },
@@ -502,7 +502,7 @@
     ],
 
     "checklist_de_emissao": [
-      { "item": 1, "check": "ck1_light_sources_complete", "descricao": "Toda fonte declara tamanho, distância, azimute, elevação e temperatura de cor." },
+      { "item": 1, "check": "ck1_light_sources_complete", "descricao": "Toda fonte declara tamanho, distância, azimute, elevação e temperatura de cor.", "aplica_quando": "scene.regime != edit" },
       { "item": 2, "check": "ck2_exposure_coherent", "descricao": "Trio de exposição coerente com as consequências declaradas. Delega a C1, C2 e C3." },
       { "item": 3, "check": "ck3_single_shadow_direction", "descricao": "Direção de sombra projetada única e declarada. Delega a C6." },
       { "item": "4a", "check": "ck4a_skin", "descricao": "Havendo pessoa: poro, especular de zona T, assimetria específica e marca preservada.", "aplica_quando": "scene.has_person" },
@@ -527,6 +527,10 @@
     {
       "if": { "properties": { "scene": { "properties": { "regime": { "const": "edit" } } } }, "required": ["scene"] },
       "then": { "required": ["edit"] }
+    },
+    {
+      "if": { "properties": { "scene": { "properties": { "regime": { "enum": ["generation", "composition"] } } } }, "required": ["scene"] },
+      "then": { "required": ["optics"] }
     },
     {
       "if": { "properties": { "scene": { "properties": { "setting": { "const": "exterior" } } } }, "required": ["scene"] },

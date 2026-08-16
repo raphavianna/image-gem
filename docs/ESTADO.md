@@ -16,9 +16,9 @@ Atualizado em: **2026-08-16**
 |---|---|
 | **E0 — Fontes** | **Concluída e aprovada.** `docs/00-fontes/`, commit `e95ac90`. **Revisada em 2026-08-16** com a fonte primária liberada — ver `00-fontes/06-fonte-primaria-ai-google-dev.md` |
 | **E1 — Doutrina de hiper-realismo** | **Concluída e aprovada.** `docs/01-doutrina-hiper-realismo.md`, commit `310c503` |
-| **E2 — Gramática do prompt** | **Concluída, aguardando aprovação no gate.** `docs/02-gramatica-do-prompt.md`, `schemas/` |
-| E3 — Modalidades | **Próxima.** Aguardando aprovação de E2 |
-| E4 — Biblioteca de templates | Não iniciada |
+| **E2 — Gramática do prompt** | **Concluída e aprovada.** `docs/02-gramatica-do-prompt.md`, `schemas/`, commit `ea52f57` |
+| **E3 — Modalidades** | **Concluída, aguardando aprovação no gate.** `docs/03-modalidades/`, renderizadores no `schemas/validador.py`, instância de edição no `schemas/exemplos/exemplo-3-edicao-fundo.json` |
+| E4 — Biblioteca de templates | **Próxima.** Aguardando aprovação de E3 |
 | E5 — Implementação | Não iniciada |
 | E6 — Loop de retroalimentação | Não iniciada |
 | E7 — Validação e fechamento | Não iniciada |
@@ -37,11 +37,11 @@ Atualizado em: **2026-08-16**
 
 | Item | Estado | Bloqueia |
 |---|---|---|
-| `GEMINI_API_KEY` no environment | **Pendente** | Execução real da modalidade 4; resolução da lacuna L3 (`person_generation`) |
+| `GEMINI_API_KEY` no environment | **Pendente** | Execução real da modalidade 4; resolução das lacunas L3 (`person_generation`) e L7 (variante do `/nano-banana`) |
 | Egress da Higgsfield | **Resolvido em 2026-08-16** — todos os hosts respondem | — |
 | Egress de `ai.google.dev` | **Resolvido em 2026-08-16** — fonte primária lida, L1/L2/L4/L6 fechadas | — |
-| Credenciais Higgsfield (`refresh_token`) | **Pendente** — não depende mais do egress | Modalidade 3 |
-| Documentação da API Higgsfield extraída | Pendente — rede liberada, extração pertence à E5 | Cliente Higgsfield completo |
+| **Credenciais Higgsfield (`HF_API_KEY_ID` + `HF_API_KEY_SECRET`)** | **Pendente** — a extração `[HF]` na E3 corrigiu o formato antes assumido de `refresh_token` | Modalidade 3 em execução real |
+| Documentação da API Higgsfield extraída | **Resolvido em 2026-08-16, na E3** — ver `docs/00-fontes/07-fonte-primaria-higgsfield.md` | — |
 
 Nenhuma delas bloqueia E2 a E4, que são schema, documentação e templates.
 

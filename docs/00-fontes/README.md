@@ -14,6 +14,7 @@ Data da extração: **2026-08-16**.
 | `04-guia-de-prompts-oficial.md` | O guia de prompts primeiro-parte: os cinco frameworks, as fórmulas, e as regras de formulação |
 | `05-divergencias-e-lacunas.md` | Divergências entre fontes, itens `[NÃO VERIFICADO]` e o que resolveria cada um |
 | `06-fonte-primaria-ai-google-dev.md` | **Extração tardia da fonte primária**, lida depois que o egress abriu: preços, orçamentos de referência por papel, guia de prompts literal, limitações |
+| `07-fonte-primaria-higgsfield.md` | **Extração tardia da Higgsfield**, antecipada da E5 para a E3: endpoint `/nano-banana`, credenciais, ciclo assíncrono, tabela de erros, SDKs |
 | `fontes.json` | Índice legível por máquina das fontes, com SHA de commit e nível de confiança |
 
 > **Nota de revisão — 2026-08-16.** A E0 foi executada com `ai.google.dev` bloqueado. Na abertura da sessão seguinte o host passou a responder `200`, e a fonte primária foi lida antes da E1 e extraída em `06-fonte-primaria-ai-google-dev.md`. Isso resolveu quatro das seis lacunas e as duas divergências abertas, e **corrigiu uma decisão travada** (teto de referências de identidade: 5, não 6). Os arquivos `01` a `04` não foram reescritos — as correções estão consolidadas em `05` e `06`, que prevalecem em caso de conflito.
@@ -25,6 +26,7 @@ Todo item extraído carrega uma etiqueta de origem inline:
 | Etiqueta | Fonte | Confiança |
 |---|---|---|
 | `[GAI]` | `ai.google.dev/gemini-api/docs/image-generation` e `/pricing` — lidos em 2026-08-16 | **Alta. Documentação primeiro-parte.** Autoridade máxima para capacidades, limites e preços |
+| `[HF]` | `docs.higgsfield.ai` e o `openapi.json` — lidos em 2026-08-16 | **Alta. Documentação primeiro-parte + contrato executável.** Autoridade máxima para a API Higgsfield |
 | `[SDK]` | `googleapis/python-genai`, `google/genai/types.py` — arquivo em `main`, sha256 `2117f4dc3ae39efb…` | Alta. Autoridade para nomes, tipos e valores de parâmetro |
 | `[CB]` | `google-gemini/cookbook` @ `c9d1a3bb2fe7a9e11724a134100280f5e14ebd30` (2026-08-13), `quickstarts/Get_Started_Nano_Banana.ipynb` | Alta. Primeiro-parte Google. Autoridade para padrões de uso e tabelas de resolução |
 | `[BLOG]` | Google Cloud Blog, *Ultimate prompting guide for Nano Banana* | Alta. Primeiro-parte Google. Autoridade para o guia de prompts e para a tabela de especificações |

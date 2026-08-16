@@ -118,11 +118,14 @@ O material marcado `[WS]` em `04-guia-de-prompts-oficial.md` — template fotorr
 
 **Impacto real: baixo.** O template fotorrealista relatado foi analisado e **rejeitado** por conflitar com a doutrina do repositório, e o `[BLOG]` cobre com muito mais profundidade o mesmo terreno.
 
-### L5 — Documentação da API Higgsfield — **aberta, mas destravada**
+### L5 — Documentação da API Higgsfield — **[RESOLVIDA]**
 
-**Atualização de 2026-08-16.** Os hosts da Higgsfield **deixaram de estar bloqueados**: `clerk.higgsfield.ai` e `oriented-jay-78.clerk.accounts.dev` respondem `200`, e `fnf-api-gw.higgsfield.ai`, `fnf.higgsfield.ai`, `cdn.higgsfield.ai` e `static.higgsfield.ai` respondem `404` — qualquer código HTTP significa que o túnel CONNECT passa. Nenhuma extração foi feita: a Higgsfield pertence à E5, e esta revisão foi feita durante a E1 apenas no que a E1 consome.
+**Resolução, 2026-08-16, durante a E3.** `docs.higgsfield.ai` respondeu `200` e a extração completa foi feita, registrada em `07-fonte-primaria-higgsfield.md` com etiqueta `[HF]`. Duas correções ao ESTADO caíram junto:
 
-O que continua pendente do usuário é a **credencial** (`refresh_token`), não o acesso de rede.
+- Credencial **não** é `refresh_token`. É par **API key ID + secret**, enviado como `Authorization: Key ID:SECRET`.
+- Modelo Nano Banana é exposto como endpoint próprio `/nano-banana`, com contrato executável no `openapi.json`.
+
+Uma nova lacuna foi aberta pela extração: L7, abaixo.
 
 Registro original abaixo.
 
@@ -131,6 +134,14 @@ Registro original abaixo.
 Todos os hosts da Higgsfield estão bloqueados. Nada foi extraído. A pendência é do usuário, conforme o gate condicional de E5 já previsto no prompt-mestre.
 
 **O que resolveria:** URL base e versão, esquema de autenticação, endpoints de geração e edição com corpo de requisição e resposta, identificadores de modelo (incluindo como o Nano Banana Pro é nomeado lá), parâmetros de imagem suportados, e o modelo de polling ou webhook. Ou a exportação das páginas de documentação para `docs/00-fontes/higgsfield/`.
+
+### L7 — Variante do Nano Banana exposta por `/nano-banana` da Higgsfield — **aberta**
+
+**Aberta pela extração do `[HF]`.** O endpoint da Higgsfield é único, sem distinção `pro` × `flash` na URL nem parâmetro que a selecione. Não se sabe se roteia sempre para `gemini-3-pro-image` (a hipótese que o prompt-mestre assume) ou se depende de configuração de conta.
+
+**Impacto:** a promessa das modalidades 2 e 3 de que o modelo alvo é o Pro depende dessa hipótese. Cai para Flash caso contrário.
+
+**O que resolve:** chamada real com credencial, comparando latência e comportamento contra a modalidade 4. Entra na bateria de validação da E7.
 
 ### L6 — `gemini-3.1-flash-lite-image` — **[RESOLVIDA]**
 
@@ -160,6 +171,6 @@ Atualizado em 2026-08-16, após a leitura da fonte primária `[GAI]`.
 | **Preço** | **Verificado** — L1 **resolvida**: `$0,134` por imagem 1K/2K, `$0,24` em 4K |
 | Marca d'água | **Verificado em substância** — citação universal direta |
 | Default de `person_generation` | **`[NÃO VERIFICADO]`** — única lacuna de conteúdo restante |
-| Higgsfield | **Nada extraído** — rede destravada, credencial pendente, escopo da E5 |
+| Higgsfield | **Verificado** — L5 **resolvida** por `[HF]` em 2026-08-16; L7 aberta sobre variante Pro vs Flash |
 
-**Lacunas abertas ao fim da E1:** L3 (`person_generation`) e L5 (Higgsfield). Nenhuma das duas bloqueia E2, E3 ou E4.
+**Lacunas abertas ao fim da E3:** L3 (`person_generation`) e L7 (variante do `/nano-banana`). Ambas só resolvem com credencial e chamada real, escopo da E7.

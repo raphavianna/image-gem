@@ -23,11 +23,19 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from validador import SCHEMA_PATH, valida  # noqa: E402
+from validador import (  # noqa: E402
+    SCHEMA_PATH,
+    renderiza_modalidade_1,
+    renderiza_modalidade_2,
+    renderiza_modalidade_3,
+    renderiza_modalidade_4,
+    valida,
+)
 
 RAIZ = Path(__file__).resolve().parent
 BASE_PESSOA = RAIZ / "exemplos" / "exemplo-1-retrato-estudio.json"
 BASE_PRODUTO = RAIZ / "exemplos" / "exemplo-4-produto-estudio.json"
+BASE_EDICAO = RAIZ / "exemplos" / "exemplo-3-edicao-fundo.json"
 
 
 def m_iso(spec):
@@ -130,6 +138,16 @@ def m_cauda_conteudo(spec):
     spec["avoid"].append("no cars in the background")
 
 
+def m_edit_sem_bloco(spec):
+    """C14 — regime edit sem o bloco edit.
+
+    O allOf do schema exige o bloco em regime edit; a regra C14 checa a metade
+    semântica (preserve não vazio). Este teste vai contra a metade estrutural.
+    """
+    spec["scene"]["regime"] = "edit"
+    spec.pop("edit", None)
+
+
 def m_densidade(spec):
     """Checklist item 8 — corpo abaixo do piso do regime.
 
@@ -173,12 +191,72 @@ CASOS = [
     ("C11 teto de referências", BASE_PESSOA, m_refs, "identity_reference_count"),
     ("C12 reflexo declara fonte", BASE_PRODUTO, m_reflexo, "C12"),
     ("C13 pessoa exige pele", BASE_PESSOA, m_sem_pele, "skin"),
+    ("C14 edit exige bloco edit", BASE_PESSOA, m_edit_sem_bloco, "'edit'"),
     ("ck1 fonte completa", BASE_PESSOA, m_fonte_incompleta, "colour_temp_k"),
     ("ck5 imperfeição específica", BASE_PESSOA, m_imperfeicao_generica, "item 5"),
     ("ck6 termos proibidos", BASE_PESSOA, m_termo_proibido, "item 6"),
     ("ck7 cauda sem conteúdo de cena", BASE_PESSOA, m_cauda_conteudo, "item 7"),
     ("ck8 orçamento de densidade", BASE_PESSOA, m_densidade, "item 8"),
 ]
+
+
+def testes_renderizadores(schema):
+    """Renderizadores das quatro modalidades sobre o exemplo 1.
+
+    Não são testes negativos — validam que a mesma instância passa por todas as
+    modalidades e produz artefatos coerentes.
+    """
+    print("Renderizadores:")
+    spec = json.loads(BASE_PESSOA.read_text(encoding="utf-8"))
+    falhas = 0
+
+    corpo1, cauda1 = renderiza_modalidade_1(spec)
+    if "4:5 frame" not in corpo1 or not cauda1.startswith("AVOID:"):
+        print("  FALHA modalidade 1: cabeçalho ou cauda ausentes")
+        falhas += 1
+    else:
+        print(f"  ok    modalidade 1  {len(corpo1.split())}p, cauda {len(cauda1.split())}p")
+
+    corpo2, cauda2, controles = renderiza_modalidade_2(spec)
+    if "4:5" in corpo2 or controles["aspect_ratio"] != "4:5":
+        # proporção sai do texto e vai para controles
+        print("  FALHA modalidade 2: proporção deveria migrar do texto para controles")
+        falhas += 1
+    else:
+        print(f"  ok    modalidade 2  {len(corpo2.split())}p, ar={controles['aspect_ratio']}")
+
+    payload3 = renderiza_modalidade_3(spec)
+    exigido3 = ["prompt", "aspect_ratio", "num_images", "output_format"]
+    falta3 = [c for c in exigido3 if c not in payload3["body"]]
+    if falta3 or payload3["url"] != "https://platform.higgsfield.ai/nano-banana":
+        print(f"  FALHA modalidade 3: campos faltando {falta3} ou URL errada")
+        falhas += 1
+    else:
+        print(f"  ok    modalidade 3  {payload3['method']} {payload3['url']}")
+
+    chamada4 = renderiza_modalidade_4(spec)
+    ic = chamada4["config"]["image_config"]
+    if ic["aspect_ratio"] != "4:5" or ic["image_size"] != "2K":
+        print(f"  FALHA modalidade 4: ImageConfig incorreta {ic}")
+        falhas += 1
+    elif chamada4["model"] != "gemini-3-pro-image":
+        print(f"  FALHA modalidade 4: modelo {chamada4['model']!r}")
+        falhas += 1
+    else:
+        print(f"  ok    modalidade 4  {chamada4['model']} + ImageConfig {ic}")
+
+    # Teste específico: aspect_ratio 21:9 é aceito na Higgsfield; um valor
+    # ficticio deve ser rejeitado.
+    spec_bad = copy.deepcopy(spec)
+    spec_bad["output"]["aspect_ratio"] = "21:9"
+    try:
+        renderiza_modalidade_3(spec_bad)
+        print("  ok    modalidade 3  aceita 21:9 (dentro do enum HF)")
+    except ValueError as e:
+        print(f"  FALHA modalidade 3: rejeitou 21:9 legítimo: {e}")
+        falhas += 1
+    print()
+    return falhas
 
 
 def main():
@@ -189,7 +267,7 @@ def main():
     # Guarda: as bases precisam estar aprovadas, senão os testes negativos não
     # provam nada — qualquer mutação "falharia" pelo motivo errado.
     print("Bases:")
-    for base in (BASE_PESSOA, BASE_PRODUTO):
+    for base in (BASE_PESSOA, BASE_PRODUTO, BASE_EDICAO):
         spec = json.loads(base.read_text(encoding="utf-8"))
         falhas, _, _ = valida(spec, schema)
         estado = "aprovada" if not falhas else f"REPROVADA: {falhas}"
@@ -197,6 +275,8 @@ def main():
         if falhas:
             falhou += 1
     print()
+
+    falhou += testes_renderizadores(schema)
 
     print("Testes negativos — cada mutação deve disparar a regra correspondente:")
     for nome, base, mutacao, fragmento in CASOS:
@@ -215,7 +295,7 @@ def main():
     if falhou:
         print(f"{falhou} problema(s).")
         return 1
-    print(f"{len(CASOS)} testes negativos passaram, e as duas bases seguem aprovadas.")
+    print(f"{len(CASOS)} testes negativos passaram, e as três bases seguem aprovadas.")
     return 0
 
 

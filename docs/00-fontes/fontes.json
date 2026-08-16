@@ -28,6 +28,31 @@
       "nota": "documentacao primeiro-parte; supera CB e BLOG em capacidades, limites e precos"
     },
     {
+      "tag": "HF",
+      "nome": "Documentacao primeiro-parte Higgsfield",
+      "urls": [
+        "https://docs.higgsfield.ai/docs/llms.txt",
+        "https://docs.higgsfield.ai/docs/openapi.json",
+        "https://docs.higgsfield.ai/docs/quickstart.md",
+        "https://docs.higgsfield.ai/docs/authentication.md",
+        "https://docs.higgsfield.ai/docs/guides/images.md",
+        "https://docs.higgsfield.ai/docs/concepts/requests.md",
+        "https://docs.higgsfield.ai/docs/concepts/polling.md",
+        "https://docs.higgsfield.ai/docs/concepts/errors.md",
+        "https://docs.higgsfield.ai/docs/concepts/rate-limits.md",
+        "https://docs.higgsfield.ai/docs/concepts/billing-and-retention.md",
+        "https://docs.higgsfield.ai/docs/concepts/file-uploads.md",
+        "https://docs.higgsfield.ai/docs/how-to/sdk.md",
+        "https://docs.higgsfield.ai/docs/how-to/webhooks.md",
+        "https://docs.higgsfield.ai/docs/api-reference/overview.md"
+      ],
+      "obtido_via": "curl direto apos liberacao de egress",
+      "lido_em": "2026-08-16",
+      "confianca": "alta",
+      "autoridade_para": ["endpoints", "parametros", "limites", "credenciais", "ciclo assincrono", "SDKs oficiais"],
+      "nota": "documentacao primeiro-parte + OpenAPI executavel"
+    },
+    {
       "tag": "SDK",
       "nome": "googleapis/python-genai",
       "arquivo": "google/genai/types.py",
@@ -148,8 +173,9 @@
     {"id": "L2", "item": "marca dagua nao configuravel", "estado": "RESOLVIDA_EM_SUBSTANCIA", "fonte": "GAI", "citacao": "All generated images include a SynthID watermark", "residuo": "nenhuma fonte afirma nem nega a impossibilidade formal de desativacao; impacto pratico nulo"},
     {"id": "L3", "item": "default e comportamento de person_generation", "estado": "ABERTA", "severidade": "media", "motivo": "nao documentado em GAI nem nas demais fontes", "resolve_com": "teste empirico com GEMINI_API_KEY"},
     {"id": "L4", "item": "guia de prompts de ai.google.dev nao lido diretamente", "estado": "RESOLVIDA", "resolvida_em": "2026-08-16", "fonte": "GAI", "nota": "template fotorrealista oficial lido literalmente e mantido rejeitado pela doutrina"},
-    {"id": "L5", "item": "documentacao da API Higgsfield", "estado": "ABERTA", "severidade": "alta", "motivo": "rede destravada em 2026-08-16, mas extracao pertence a E5; credencial refresh_token segue pendente", "resolve_com": "extracao na E5 mais credencial do usuario"},
-    {"id": "L6", "item": "gemini-3.1-flash-lite-image sem descricao", "estado": "RESOLVIDA", "fonte": "GAI", "valor": "Nano Banana 2 Lite; nao otimizado para multi-referencia nem edicao sequencial; fora do caminho principal"}
+    {"id": "L5", "item": "documentacao da API Higgsfield", "estado": "RESOLVIDA", "resolvida_em": "2026-08-16", "fonte": "HF", "nota": "endpoint /nano-banana; auth Key ID:SECRET (nao refresh_token); ciclo assincrono POST->poll; SDKs oficiais"},
+    {"id": "L6", "item": "gemini-3.1-flash-lite-image sem descricao", "estado": "RESOLVIDA", "fonte": "GAI", "valor": "Nano Banana 2 Lite; nao otimizado para multi-referencia nem edicao sequencial; fora do caminho principal"},
+    {"id": "L7", "item": "variante do Nano Banana exposta por /nano-banana da Higgsfield", "estado": "ABERTA", "severidade": "media", "aberta_em": "2026-08-16", "aberta_por": "extracao HF", "motivo": "endpoint unico sem distincao pro vs flash; OpenAPI nao documenta o mapeamento", "resolve_com": "chamada real com credencial comparando contra a modalidade 4"}
   ],
   "divergencias": [
     {"id": "D1", "item": "aspect ratios 4:5 e 5:4", "estado": "RESOLVIDA", "resolucao": "suportados; GAI lista 4:5 em 928x1152 (1K), identico ao CB; docstring do SDK desatualizada"},

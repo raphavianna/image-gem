@@ -330,6 +330,10 @@ def aplica(regra, spec):
         return True
     if quando == "scene.has_person":
         return cena["has_person"]
+    if quando == "scene.has_person and scene.regime != edit":
+        return cena["has_person"] and cena["regime"] != "edit"
+    if quando == "scene.regime != edit":
+        return cena["regime"] != "edit"
     if quando == "scene.setting == studio":
         return cena["setting"] == "studio"
     if quando == "scene.setting == exterior":
@@ -728,13 +732,24 @@ def _bloco_edit(spec):
     return blocos
 
 
-def renderiza_modalidade_1(spec):
-    """Renderiza o spec como prompt colável para a interface do Gemini."""
+def renderiza_modalidade_1(spec, incluir_output_no_texto=True):
+    """Renderiza o spec como prompt colável para a interface do Gemini.
+
+    Nas modalidades 1 e 2 (interface), proporção e resolução são verbalizadas no
+    corpo — não há campo estruturado. Nas 3 e 4 (API), essa informação sai do
+    texto e vai para os parâmetros da chamada; passe incluir_output_no_texto=False.
+    """
     o = spec["output"]
-    cabecalho = _frase(
-        spec["scene"]["headline"],
-        f", {o['orientation']} {o['aspect_ratio']} frame" if o.get("orientation") else f", {o['aspect_ratio']} frame",
-    )
+    if incluir_output_no_texto:
+        orientacao = o.get("orientation")
+        sufixo = (
+            f", {orientacao} {o['aspect_ratio']} frame"
+            if orientacao
+            else f", {o['aspect_ratio']} frame"
+        )
+        cabecalho = _frase(spec["scene"]["headline"], sufixo)
+    else:
+        cabecalho = _frase(spec["scene"]["headline"])
 
     if spec["scene"]["regime"] == "edit":
         blocos = _bloco_edit(spec)
@@ -760,6 +775,137 @@ def renderiza_modalidade_1(spec):
     corpo = "\n\n".join(partes)
     cauda = "AVOID: " + ", ".join(spec["avoid"]) + "."
     return corpo, cauda
+
+
+# --------------------------------------------------------------------------- #
+# Renderizadores das modalidades 2, 3 e 4                                     #
+# --------------------------------------------------------------------------- #
+#
+# Todas as modalidades compartilham o mesmo corpo textual, diferindo em como
+# proporção/resolução e imagens de referência são carregadas. Uma variação por
+# destino, não uma reescrita:
+#
+#   1  interface Gemini      → texto puro, proporção verbalizada
+#   2  interface Higgsfield  → texto puro + mapeamento dos controles
+#   3  conector Higgsfield   → payload POST /nano-banana
+#   4  API Gemini            → payload generate_content com ImageConfig
+
+
+# Aspect ratios extras da Higgsfield versus a Gemini API. "auto" herda do input,
+# útil em edição a partir de imagem ancorada. Fonte: [HF] openapi.json.
+ASPECT_RATIOS_HIGGSFIELD = {
+    "auto", "1:1", "4:3", "3:4", "3:2", "2:3", "5:4", "4:5", "16:9", "9:16", "21:9"
+}
+
+
+def renderiza_modalidade_2(spec):
+    """Modalidade 2 — texto colável para a interface da Higgsfield + controles.
+
+    A interface Higgsfield aceita o texto integral e expõe os parâmetros como
+    controles próprios do painel. Devolvemos o texto e o mapeamento a preencher.
+    """
+    corpo, cauda = renderiza_modalidade_1(spec, incluir_output_no_texto=False)
+    o = spec["output"]
+
+    if o["aspect_ratio"] not in ASPECT_RATIOS_HIGGSFIELD:
+        raise ValueError(
+            f"aspect_ratio {o['aspect_ratio']!r} não é aceito pela Higgsfield "
+            f"em /nano-banana; ver docs/00-fontes/07-fonte-primaria-higgsfield.md"
+        )
+
+    controles = {
+        "model": "Nano Banana (endpoint /nano-banana)",
+        "aspect_ratio": o["aspect_ratio"],
+        "num_images": 1,
+        "output_format": "jpeg",
+        "input_images": [],
+        # 'resolution' NÃO existe em /nano-banana. Documentado, não emitido.
+        "_nota_resolucao": (
+            "A Higgsfield não expõe controle de resolução em /nano-banana. "
+            "Se precisa de 4K auditável, use a modalidade 4."
+        ),
+    }
+    return corpo, cauda, controles
+
+
+def renderiza_modalidade_3(spec):
+    """Modalidade 3 — payload REST para POST /nano-banana da Higgsfield.
+
+    O contrato vem do openapi.json da própria Higgsfield ([HF]).
+    """
+    if spec["output"]["aspect_ratio"] not in ASPECT_RATIOS_HIGGSFIELD:
+        raise ValueError(
+            f"aspect_ratio {spec['output']['aspect_ratio']!r} não é aceito por "
+            "/nano-banana da Higgsfield"
+        )
+
+    corpo, cauda = renderiza_modalidade_1(spec, incluir_output_no_texto=False)
+    prompt = f"{corpo}\n\n{cauda}"
+
+    payload = {
+        "prompt": prompt,
+        "num_images": 1,
+        "aspect_ratio": spec["output"]["aspect_ratio"],
+        "output_format": "jpeg",
+    }
+
+    # Referências entram como URL, não bytes. Uploads locais precisam passar
+    # antes por POST /files/generate-upload-url — abstraído pelo cliente da E5.
+    refs = spec.get("character", {}).get("references_urls") or []
+    if spec["scene"]["regime"] == "edit":
+        refs = refs + (spec.get("edit", {}).get("source_urls") or [])
+    if refs:
+        if len(refs) > 8:
+            raise ValueError(
+                f"{len(refs)} imagens de referência excede o teto de 8 do endpoint "
+                "/nano-banana da Higgsfield"
+            )
+        payload["input_images"] = [{"type": "image_url", "image_url": u} for u in refs]
+
+    chamada = {
+        "method": "POST",
+        "url": "https://platform.higgsfield.ai/nano-banana",
+        "headers": {
+            "Authorization": "Key ${HF_API_KEY_ID}:${HF_API_KEY_SECRET}",
+            "Content-Type": "application/json",
+        },
+        "body": payload,
+    }
+    return chamada
+
+
+def renderiza_modalidade_4(spec):
+    """Modalidade 4 — payload para a API Gemini via google-genai.
+
+    Devolve um dicionário com o corpo textual e a ImageConfig estruturada. O
+    envelope da chamada (Client, generate_content, chats) fica em
+    docs/03-modalidades/4-api-gemini.md.
+    """
+    corpo, cauda = renderiza_modalidade_1(spec, incluir_output_no_texto=False)
+    prompt = f"{corpo}\n\n{cauda}"
+
+    image_config = {
+        "aspect_ratio": spec["output"]["aspect_ratio"],
+        "image_size": spec["output"]["resolution"],
+    }
+    chamada = {
+        "sdk": "google-genai",
+        "model": spec["meta"]["target_model"],
+        "contents": prompt,
+        "config": {
+            "response_modalities": ["IMAGE"],
+            "image_config": image_config,
+        },
+    }
+    # Referências no schema Gemini entram na lista `contents`, ao lado do texto.
+    # [SDK] não expõe SubjectReferenceConfig em ImageConfig — a separação
+    # invariante/variável fica na prosa do prompt, não em parâmetro.
+    refs = spec.get("character", {}).get("references_urls") or []
+    if spec["scene"]["regime"] == "edit":
+        refs = refs + (spec.get("edit", {}).get("source_urls") or [])
+    if refs:
+        chamada["contents"] = [prompt] + [{"image_url": u} for u in refs]
+    return chamada
 
 
 # --------------------------------------------------------------------------- #
