@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "extracted_at": "2026-08-16",
+  "etapa": "E0",
+  "hierarquia_de_autoridade": [
+    "SDK para nomes, tipos e valores aceitos de parametro",
+    "documentacao primeiro-parte para capacidades, limites e precos",
+    "cookbook e notebooks para padroes de uso"
+  ],
+  "fontes": [
+    {
+      "tag": "SDK",
+      "nome": "googleapis/python-genai",
+      "arquivo": "google/genai/types.py",
+      "ref": "main",
+      "obtido_via": "raw.githubusercontent.com",
+      "sha256_prefixo": "2117f4dc3ae39efb",
+      "linhas": 23390,
+      "confianca": "alta",
+      "autoridade_para": ["nomes de parametro", "tipos", "valores aceitos", "disponibilidade Gemini API vs Vertex"]
+    },
+    {
+      "tag": "CB",
+      "nome": "google-gemini/cookbook",
+      "arquivo": "quickstarts/Get_Started_Nano_Banana.ipynb",
+      "commit": "c9d1a3bb2fe7a9e11724a134100280f5e14ebd30",
+      "commit_date": "2026-08-13T19:22:54+02:00",
+      "obtido_via": "clone git anonimo",
+      "confianca": "alta",
+      "autoridade_para": ["padroes de uso", "tabela de dimensoes em pixel", "limites de multi-referencia", "identificadores de modelo"]
+    },
+    {
+      "tag": "BLOG",
+      "nome": "Google Cloud Blog - Ultimate prompting guide for Nano Banana",
+      "url": "https://cloud.google.com/blog/products/ai-machine-learning/ultimate-prompting-guide-for-nano-banana",
+      "obtido_via": "WebFetch direto",
+      "confianca": "alta",
+      "autoridade_para": ["guia de prompts", "cinco frameworks", "tabela de especificacoes", "C2PA e SynthID"]
+    },
+    {
+      "tag": "VTX-NB",
+      "nome": "GoogleCloudPlatform/generative-ai",
+      "arquivo": "gemini/getting-started/intro_gemini_3_image_gen.ipynb",
+      "ref": "main",
+      "obtido_via": "raw.githubusercontent.com",
+      "confianca": "alta",
+      "autoridade_para": ["cliente Vertex", "confirmacao de model id"]
+    },
+    {
+      "tag": "PYPI",
+      "nome": "PyPI google-genai",
+      "url": "https://pypi.org/pypi/google-genai/json",
+      "obtido_via": "curl",
+      "confianca": "alta",
+      "autoridade_para": ["versao do pacote", "requires_python"],
+      "valores": {"latest": "2.18.1", "requires_python": ">=3.10", "minimo_nb2": "2.9.0"}
+    },
+    {
+      "tag": "WS",
+      "nome": "Relay de busca web sobre paginas bloqueadas",
+      "paginas_alvo": [
+        "https://ai.google.dev/gemini-api/docs/image-generation",
+        "https://ai.google.dev/gemini-api/docs/interactions/image-generation.md.txt"
+      ],
+      "obtido_via": "WebSearch",
+      "confianca": "media",
+      "autoridade_para": [],
+      "nota": "parafrase de terceiro sobre fonte primaria; nunca e autoridade sozinho"
+    }
+  ],
+  "egress": {
+    "verificado_em": "2026-08-16",
+    "bloqueados": [
+      "ai.google.dev",
+      "docs.cloud.google.com",
+      "developers.googleblog.com",
+      "blog.google",
+      "aistudio.google.com",
+      "higgsfield.ai",
+      "api.higgsfield.ai",
+      "platform.higgsfield.ai"
+    ],
+    "liberados": [
+      "cloud.google.com",
+      "cloud.google.com/blog",
+      "raw.githubusercontent.com",
+      "api.github.com",
+      "pypi.org",
+      "generativelanguage.googleapis.com"
+    ],
+    "armadilha": "cloud.google.com/vertex-ai/* responde 301 para docs.cloud.google.com, que e bloqueado"
+  },
+  "modelos": {
+    "alvo": "gemini-3-pro-image",
+    "correspondencia": {
+      "gemini-3-pro-image": "Nano Banana Pro",
+      "gemini-3.1-flash-image": "Nano Banana 2",
+      "gemini-2.5-flash-image": "Nano Banana",
+      "gemini-3.1-flash-lite-image": null
+    }
+  },
+  "lacunas": [
+    {"id": "L1", "item": "preco por imagem", "severidade": "critica", "motivo": "todas as paginas de preco bloqueadas no egress", "resolve_com": "liberacao de egress, tabela colada pelo usuario, ou usage_metadata de chamada real"},
+    {"id": "L2", "item": "marca dagua nao configuravel", "severidade": "baixa", "motivo": "inferencia a partir de SDK e BLOG, sem citacao direta", "resolve_com": "doc bloqueada ou metadados de imagem gerada"},
+    {"id": "L3", "item": "default e comportamento de person_generation", "severidade": "media", "motivo": "nao documentado nas fontes acessiveis", "resolve_com": "doc bloqueada ou teste empirico"},
+    {"id": "L4", "item": "guia de prompts de ai.google.dev nao lido diretamente", "severidade": "baixa", "motivo": "host bloqueado", "resolve_com": "liberacao de egress"},
+    {"id": "L5", "item": "documentacao da API Higgsfield", "severidade": "alta", "motivo": "todos os hosts bloqueados", "resolve_com": "usuario fornecer docs no repositorio"},
+    {"id": "L6", "item": "gemini-3.1-flash-lite-image sem descricao", "severidade": "nenhuma", "motivo": "aparece so na lista de selecao do cookbook", "resolve_com": "doc bloqueada"}
+  ],
+  "divergencias": [
+    {"id": "D1", "item": "aspect ratios 4:5 e 5:4", "resolucao": "suportados; docstring do SDK desatualizada; campo e Optional[str] sem enum", "pendente": "confirmacao empirica de dimensao 928x1152 em 1K"},
+    {"id": "D2", "item": "limite de imagens de referencia", "resolucao": "6 em alta fidelidade e o teto operacional para identidade preservada; 14 e o teto absoluto", "pendente": "comparacao empirica 6 vs 8"},
+    {"id": "D3", "item": "thinking_level no NB Pro", "resolucao": "NB Pro pensa, mas thinking_level foi introduzido pelo NB 2; nao depender dele no caminho Pro", "pendente": "teste"}
+  ]
+}
